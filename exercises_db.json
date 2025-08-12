@@ -1,0 +1,1577 @@
+[
+    {
+        "id": 1749145141564,
+        "title": "test",
+        "description": "Create Button",
+        "exercise_type": "frontend",
+        "frontend_testcases": [
+            {
+                "id": 1,
+                "name": "hiển thị nút",
+                "type": "element_exists",
+                "selector": ".button",
+                "trigger": null,
+                "expected": null,
+                "attributeName": null,
+                "is_frontend": true
+            }
+        ],
+        "backend_testcases": []
+    },
+    {
+        "id": 1749170635507,
+        "title": "tạo nút màu xanh",
+        "description": "tạo nút màu xanh",
+        "exercise_type": "frontend",
+        "frontend_testcases": [
+            {
+                "id": 1,
+                "name": "hiển thị nút",
+                "type": "element_exists",
+                "selector": ".button",
+                "trigger": null,
+                "expected": null,
+                "attributeName": null,
+                "is_frontend": true
+            },
+            {
+                "id": 2,
+                "name": "màu nút",
+                "type": "attribute_equals",
+                "selector": ".button",
+                "trigger": null,
+                "expected": "green",
+                "attributeName": "background",
+                "is_frontend": true
+            }
+        ],
+        "backend_testcases": []
+    },
+    {
+        "id": 1749171930399,
+        "title": "tạo card login có trường emaill. password",
+        "description": "tạo card login có trường emaill. password",
+        "exercise_type": "frontend",
+        "frontend_testcases": [
+            {
+                "id": 1,
+                "name": "hiển thị nút",
+                "type": "element_exists",
+                "selector": ".login",
+                "trigger": null,
+                "expected": null,
+                "attributeName": null,
+                "is_frontend": true
+            },
+            {
+                "id": 2,
+                "name": "Kiểm tra input",
+                "type": "element_exists",
+                "selector": ".inputpassword",
+                "trigger": null,
+                "expected": null,
+                "attributeName": null,
+                "is_frontend": true
+            },
+            {
+                "id": 3,
+                "name": "kiểm tra input có phải email",
+                "type": "attribute_equals",
+                "selector": ".inputemail",
+                "trigger": null,
+                "expected": "email",
+                "attributeName": "type",
+                "is_frontend": true
+            }
+        ],
+        "backend_testcases": []
+    },
+    {
+        "id": 1749172322856,
+        "title": "Tương tác Nút và Hiển thị Thông báo",
+        "description": "Tạo một nút bấm. Khi người dùng nhấp vào nút này, một đoạn văn bản trên trang sẽ được cập nhật và một thông báo alert JavaScript sẽ xuất hiện.",
+        "exercise_type": "frontend",
+        "frontend_testcases": [
+            {
+                "id": 1,
+                "name": "Hiển thị nút bấm",
+                "type": "element_exists",
+                "selector": "#interactiveButton",
+                "trigger": null,
+                "expected": null,
+                "attributeName": null,
+                "is_frontend": true
+            },
+            {
+                "id": 2,
+                "name": "Hiển thị vùng trạng thái",
+                "type": "element_exists",
+                "selector": "#statusMessage",
+                "trigger": null,
+                "expected": null,
+                "attributeName": null,
+                "is_frontend": true
+            },
+            {
+                "id": 3,
+                "name": "Nội dung ban đầu của vùng trạng thái",
+                "type": "text_equals",
+                "selector": "#statusMessage",
+                "trigger": null,
+                "expected": "Chưa có hành động",
+                "attributeName": null,
+                "is_frontend": true
+            },
+            {
+                "id": 4,
+                "name": "Thay đổi nội dung vùng trạng thái sau khi click",
+                "type": "text_equals",
+                "selector": "#statusMessage",
+                "trigger": "click:#interactiveButton",
+                "expected": "Nút đã được nhấp!",
+                "attributeName": null,
+                "is_frontend": true
+            },
+            {
+                "id": 5,
+                "name": "Hiển thị alert sau khi click",
+                "type": "js_alert",
+                "selector": null,
+                "trigger": "click:#interactiveButton",
+                "expected": "Đã nhấp nút",
+                "attributeName": null,
+                "is_frontend": true
+            }
+        ],
+        "backend_testcases": []
+    },
+    {
+        "id": 1749374198169,
+        "title": "test2",
+        "description": "Điền username, password, nhấn nút đăng nhập và kiểm tra xem có được chuyển đến trang dashboard không",
+        "exercise_type": "frontend",
+        "frontend_testcases": [
+            {
+                "id": 1,
+                "name": "\"Điền form và nhấn đăng nhập",
+                "type": "url_contains",
+                "selector": null,
+                "trigger": "input:#username=myuser; input:#password=mypass; click:#login-button\"",
+                "expected": "/dashboard",
+                "attributeName": null,
+                "is_frontend": true
+            }
+        ],
+        "backend_testcases": []
+    },
+     {
+        "id": 1749410001001,
+        "title": "Tạo một tiêu đề cấp 1",
+        "description": "Tạo một phần tử `<h1>` với một class là 'main-title' và nội dung là 'Chào mừng!'",
+        "exercise_type": "frontend",
+        "frontend_testcases": [
+            {
+                "id": 1,
+                "name": "Kiểm tra sự tồn tại của tiêu đề",
+                "type": "element_exists",
+                "selector": "h1.main-title",
+                "trigger": null,
+                "expected": null,
+                "attributeName": null,
+                "is_frontend": true
+            },
+            {
+                "id": 2,
+                "name": "Kiểm tra nội dung tiêu đề",
+                "type": "text_equals",
+                "selector": "h1.main-title",
+                "trigger": null,
+                "expected": "Chào mừng!",
+                "attributeName": null,
+                "is_frontend": true
+            }
+        ],
+        "backend_testcases": []
+    },
+    {
+        "id": 1749410001002,
+        "title": "Tạo một đoạn văn bản",
+        "description": "Tạo một phần tử `<p>` với id là 'intro-paragraph' chứa một đoạn văn bản bất kỳ.",
+        "exercise_type": "frontend",
+        "frontend_testcases": [
+            {
+                "id": 1,
+                "name": "Kiểm tra sự tồn tại của đoạn văn",
+                "type": "element_exists",
+                "selector": "#intro-paragraph",
+                "trigger": null,
+                "expected": null,
+                "attributeName": null,
+                "is_frontend": true
+            }
+        ],
+        "backend_testcases": []
+    },
+    {
+        "id": 1749410001003,
+        "title": "Tạo một liên kết",
+        "description": "Tạo một thẻ `<a>` với class 'external-link' trỏ đến 'https://www.google.com' và có nội dung là 'Đi tới Google'.",
+        "exercise_type": "frontend",
+        "frontend_testcases": [
+            {
+                "id": 1,
+                "name": "Kiểm tra sự tồn tại của liên kết",
+                "type": "element_exists",
+                "selector": "a.external-link",
+                "trigger": null,
+                "expected": null,
+                "attributeName": null,
+                "is_frontend": true
+            },
+            {
+                "id": 2,
+                "name": "Kiểm tra thuộc tính href",
+                "type": "attribute_equals",
+                "selector": "a.external-link",
+                "trigger": null,
+                "expected": "https://www.google.com/",
+                "attributeName": "href",
+                "is_frontend": true
+            },
+            {
+                "id": 3,
+                "name": "Kiểm tra nội dung liên kết",
+                "type": "text_equals",
+                "selector": "a.external-link",
+                "trigger": null,
+                "expected": "Đi tới Google",
+                "attributeName": null,
+                "is_frontend": true
+            }
+        ],
+        "backend_testcases": []
+    },
+    {
+        "id": 1749410001004,
+        "title": "Hiển thị một hình ảnh",
+        "description": "Tạo một thẻ `<img>` với id 'profile-pic', thuộc tính `src` là 'image.jpg' và `alt` là 'Ảnh hồ sơ'.",
+        "exercise_type": "frontend",
+        "frontend_testcases": [
+            {
+                "id": 1,
+                "name": "Kiểm tra sự tồn tại của ảnh",
+                "type": "element_exists",
+                "selector": "#profile-pic",
+                "trigger": null,
+                "expected": null,
+                "attributeName": null,
+                "is_frontend": true
+            },
+            {
+                "id": 2,
+                "name": "Kiểm tra thuộc tính src",
+                "type": "attribute_equals",
+                "selector": "#profile-pic",
+                "trigger": null,
+                "expected": "image.jpg",
+                "attributeName": "src",
+                "is_frontend": true
+            },
+            {
+                "id": 3,
+                "name": "Kiểm tra thuộc tính alt",
+                "type": "attribute_equals",
+                "selector": "#profile-pic",
+                "trigger": null,
+                "expected": "Ảnh hồ sơ",
+                "attributeName": "alt",
+                "is_frontend": true
+            }
+        ],
+        "backend_testcases": []
+    },
+    {
+        "id": 1749410001005,
+        "title": "Tạo danh sách không có thứ tự",
+        "description": "Tạo một thẻ `<ul>` với class 'item-list' chứa 3 phần tử `<li>`.",
+        "exercise_type": "frontend",
+        "frontend_testcases": [
+            {
+                "id": 1,
+                "name": "Kiểm tra sự tồn tại của danh sách",
+                "type": "element_exists",
+                "selector": "ul.item-list",
+                "trigger": null,
+                "expected": null,
+                "attributeName": null,
+                "is_frontend": true
+            },
+            {
+                "id": 2,
+                "name": "Kiểm tra số lượng mục trong danh sách",
+                "type": "element_exists",
+                "selector": "ul.item-list li:nth-child(3)",
+                "trigger": null,
+                "expected": null,
+                "attributeName": null,
+                "is_frontend": true
+            }
+        ],
+        "backend_testcases": []
+    },
+    {
+        "id": 1749410001006,
+        "title": "Tạo một nút bấm đơn giản",
+        "description": "Tạo một phần tử `<button>` với id là 'submit-btn' và nội dung là 'Gửi'.",
+        "exercise_type": "frontend",
+        "frontend_testcases": [
+            {
+                "id": 1,
+                "name": "Kiểm tra sự tồn tại của nút",
+                "type": "element_exists",
+                "selector": "#submit-btn",
+                "trigger": null,
+                "expected": null,
+                "attributeName": null,
+                "is_frontend": true
+            },
+            {
+                "id": 2,
+                "name": "Kiểm tra nội dung nút",
+                "type": "text_equals",
+                "selector": "#submit-btn",
+                "trigger": null,
+                "expected": "Gửi",
+                "attributeName": null,
+                "is_frontend": true
+            }
+        ],
+        "backend_testcases": []
+    },
+    {
+        "id": 1749410001007,
+        "title": "Tạo ô nhập liệu văn bản",
+        "description": "Tạo một thẻ `<input>` có `type` là 'text' và id là 'username-input'.",
+        "exercise_type": "frontend",
+        "frontend_testcases": [
+            {
+                "id": 1,
+                "name": "Kiểm tra sự tồn tại của ô nhập liệu",
+                "type": "element_exists",
+                "selector": "#username-input",
+                "trigger": null,
+                "expected": null,
+                "attributeName": null,
+                "is_frontend": true
+            },
+            {
+                "id": 2,
+                "name": "Kiểm tra loại của ô nhập liệu",
+                "type": "attribute_equals",
+                "selector": "#username-input",
+                "trigger": null,
+                "expected": "text",
+                "attributeName": "type",
+                "is_frontend": true
+            }
+        ],
+        "backend_testcases": []
+    },
+    {
+        "id": 1749410001008,
+        "title": "Tạo một div container",
+        "description": "Tạo một thẻ `<div>` với class là 'container'.",
+        "exercise_type": "frontend",
+        "frontend_testcases": [
+            {
+                "id": 1,
+                "name": "Kiểm tra sự tồn tại của div",
+                "type": "element_exists",
+                "selector": ".container",
+                "trigger": null,
+                "expected": null,
+                "attributeName": null,
+                "is_frontend": true
+            }
+        ],
+        "backend_testcases": []
+    },
+    {
+        "id": 1749410001009,
+        "title": "Tạo nhãn cho ô nhập liệu",
+        "description": "Tạo một thẻ `<label>` có thuộc tính `for` là 'email' và nội dung là 'Email:'.",
+        "exercise_type": "frontend",
+        "frontend_testcases": [
+            {
+                "id": 1,
+                "name": "Kiểm tra sự tồn tại của nhãn",
+                "type": "element_exists",
+                "selector": "label[for='email']",
+                "trigger": null,
+                "expected": null,
+                "attributeName": null,
+                "is_frontend": true
+            },
+            {
+                "id": 2,
+                "name": "Kiểm tra nội dung nhãn",
+                "type": "text_equals",
+                "selector": "label[for='email']",
+                "trigger": null,
+                "expected": "Email:",
+                "attributeName": null,
+                "is_frontend": true
+            }
+        ],
+        "backend_testcases": []
+    },
+    {
+        "id": 1749410001010,
+        "title": "Tạo ô nhập mật khẩu",
+        "description": "Tạo một thẻ `<input>` có `type` là 'password' và class là 'password-field'.",
+        "exercise_type": "frontend",
+        "frontend_testcases": [
+            {
+                "id": 1,
+                "name": "Kiểm tra sự tồn tại của ô mật khẩu",
+                "type": "element_exists",
+                "selector": ".password-field",
+                "trigger": null,
+                "expected": null,
+                "attributeName": null,
+                "is_frontend": true
+            },
+            {
+                "id": 2,
+                "name": "Kiểm tra loại của ô nhập liệu",
+                "type": "attribute_equals",
+                "selector": ".password-field",
+                "trigger": null,
+                "expected": "password",
+                "attributeName": "type",
+                "is_frontend": true
+            }
+        ],
+        "backend_testcases": []
+    },
+    {
+        "id": 1749410002001,
+        "title": "Thay đổi màu nền của một div",
+        "description": "Tạo một `div` với id 'box' và đặt màu nền cho nó là 'lightblue'.",
+        "exercise_type": "frontend",
+        "frontend_testcases": [
+            {
+                "id": 1,
+                "name": "Kiểm tra sự tồn tại của div",
+                "type": "element_exists",
+                "selector": "#box",
+                "trigger": null,
+                "expected": null,
+                "attributeName": null,
+                "is_frontend": true
+            },
+            {
+                "id": 2,
+                "name": "Kiểm tra màu nền",
+                "type": "attribute_equals",
+                "selector": "#box",
+                "trigger": null,
+                "expected": "lightblue",
+                "attributeName": "background-color",
+                "is_frontend": true
+            }
+        ],
+        "backend_testcases": []
+    },
+    {
+        "id": 1749410002002,
+        "title": "Thay đổi màu chữ của đoạn văn",
+        "description": "Tạo một đoạn văn `<p>` với class 'text-colored' và đặt màu chữ là 'red'.",
+        "exercise_type": "frontend",
+        "frontend_testcases": [
+            {
+                "id": 1,
+                "name": "Kiểm tra sự tồn tại của đoạn văn",
+                "type": "element_exists",
+                "selector": "p.text-colored",
+                "trigger": null,
+                "expected": null,
+                "attributeName": null,
+                "is_frontend": true
+            },
+            {
+                "id": 2,
+                "name": "Kiểm tra màu chữ",
+                "type": "attribute_equals",
+                "selector": "p.text-colored",
+                "trigger": null,
+                "expected": "red",
+                "attributeName": "color",
+                "is_frontend": true
+            }
+        ],
+        "backend_testcases": []
+    },
+    {
+        "id": 1749410002003,
+        "title": "Tăng kích thước phông chữ",
+        "description": "Tạo một tiêu đề `<h2>` với id 'large-heading' và đặt kích thước phông chữ là '32px'.",
+        "exercise_type": "frontend",
+        "frontend_testcases": [
+            {
+                "id": 1,
+                "name": "Kiểm tra sự tồn tại của tiêu đề",
+                "type": "element_exists",
+                "selector": "#large-heading",
+                "trigger": null,
+                "expected": null,
+                "attributeName": null,
+                "is_frontend": true
+            },
+            {
+                "id": 2,
+                "name": "Kiểm tra kích thước phông chữ",
+                "type": "attribute_equals",
+                "selector": "#large-heading",
+                "trigger": null,
+                "expected": "32px",
+                "attributeName": "font-size",
+                "is_frontend": true
+            }
+        ],
+        "backend_testcases": []
+    },
+    {
+        "id": 1749410002004,
+        "title": "Căn giữa văn bản",
+        "description": "Tạo một `div` với class 'centered-content' và căn chỉnh văn bản bên trong nó ra giữa.",
+        "exercise_type": "frontend",
+        "frontend_testcases": [
+            {
+                "id": 1,
+                "name": "Kiểm tra sự tồn tại của div",
+                "type": "element_exists",
+                "selector": ".centered-content",
+                "trigger": null,
+                "expected": null,
+                "attributeName": null,
+                "is_frontend": true
+            },
+            {
+                "id": 2,
+                "name": "Kiểm tra căn lề văn bản",
+                "type": "attribute_equals",
+                "selector": ".centered-content",
+                "trigger": null,
+                "expected": "center",
+                "attributeName": "text-align",
+                "is_frontend": true
+            }
+        ],
+        "backend_testcases": []
+    },
+    {
+        "id": 1749410002005,
+        "title": "Thêm viền cho một nút",
+        "description": "Tạo một `<button>` với id 'bordered-btn' và thêm viền '2px solid black'.",
+        "exercise_type": "frontend",
+        "frontend_testcases": [
+            {
+                "id": 1,
+                "name": "Kiểm tra sự tồn tại của nút",
+                "type": "element_exists",
+                "selector": "#bordered-btn",
+                "trigger": null,
+                "expected": null,
+                "attributeName": null,
+                "is_frontend": true
+            },
+            {
+                "id": 2,
+                "name": "Kiểm tra viền",
+                "type": "attribute_equals",
+                "selector": "#bordered-btn",
+                "trigger": null,
+                "expected": "2px solid black",
+                "attributeName": "border",
+                "is_frontend": true
+            }
+        ],
+        "backend_testcases": []
+    },
+    {
+        "id": 1749410002006,
+        "title": "Sử dụng Flexbox để căn giữa",
+        "description": "Tạo một `div` cha có id 'flex-container' sử dụng `display: flex`, `justify-content: center` và `align-items: center` để căn giữa một `div` con.",
+        "exercise_type": "frontend",
+        "frontend_testcases": [
+            {
+                "id": 1,
+                "name": "Kiểm tra display của container",
+                "type": "attribute_equals",
+                "selector": "#flex-container",
+                "trigger": null,
+                "expected": "flex",
+                "attributeName": "display",
+                "is_frontend": true
+            },
+            {
+                "id": 2,
+                "name": "Kiểm tra justify-content",
+                "type": "attribute_equals",
+                "selector": "#flex-container",
+                "trigger": null,
+                "expected": "center",
+                "attributeName": "justify-content",
+                "is_frontend": true
+            },
+            {
+                "id": 3,
+                "name": "Kiểm tra align-items",
+                "type": "attribute_equals",
+                "selector": "#flex-container",
+                "trigger": null,
+                "expected": "center",
+                "attributeName": "align-items",
+                "is_frontend": true
+            }
+        ],
+        "backend_testcases": []
+    },
+    {
+        "id": 1749410002007,
+        "title": "Tạo bố cục lưới 2 cột",
+        "description": "Tạo một `div` với id 'grid-container' sử dụng `display: grid` và `grid-template-columns: 1fr 1fr` để tạo ra hai cột bằng nhau.",
+        "exercise_type": "frontend",
+        "frontend_testcases": [
+            {
+                "id": 1,
+                "name": "Kiểm tra display của container",
+                "type": "attribute_equals",
+                "selector": "#grid-container",
+                "trigger": null,
+                "expected": "grid",
+                "attributeName": "display",
+                "is_frontend": true
+            },
+            {
+                "id": 2,
+                "name": "Kiểm tra grid-template-columns",
+                "type": "attribute_equals",
+                "selector": "#grid-container",
+                "trigger": null,
+                "expected": "1fr 1fr",
+                "attributeName": "grid-template-columns",
+                "is_frontend": true
+            }
+        ],
+        "backend_testcases": []
+    },
+    {
+        "id": 1749410002008,
+        "title": "Thay đổi màu nền khi di chuột",
+        "description": "Tạo một nút bấm với class 'hover-btn' có màu nền ban đầu. Khi di chuột qua, màu nền thay đổi thành 'darkgray'.",
+        "exercise_type": "frontend",
+        "frontend_testcases": [
+            {
+                "id": 1,
+                "name": "Kiểm tra sự tồn tại của nút",
+                "type": "element_exists",
+                "selector": ".hover-btn",
+                "trigger": null,
+                "expected": null,
+                "attributeName": null,
+                "is_frontend": true
+            },
+            {
+                "id": 2,
+                "name": "Kiểm tra màu nền khi di chuột",
+                "type": "attribute_equals",
+                "selector": ".hover-btn:hover",
+                "trigger": "hover:.hover-btn",
+                "expected": "darkgray",
+                "attributeName": "background-color",
+                "is_frontend": true
+            }
+        ],
+        "backend_testcases": []
+    },
+    {
+        "id": 1749410002009,
+        "title": "Thêm padding cho một phần tử",
+        "description": "Tạo một `div` với id 'padded-box' và đặt `padding` là '20px'.",
+        "exercise_type": "frontend",
+        "frontend_testcases": [
+            {
+                "id": 1,
+                "name": "Kiểm tra sự tồn tại của div",
+                "type": "element_exists",
+                "selector": "#padded-box",
+                "trigger": null,
+                "expected": null,
+                "attributeName": null,
+                "is_frontend": true
+            },
+            {
+                "id": 2,
+                "name": "Kiểm tra padding",
+                "type": "attribute_equals",
+                "selector": "#padded-box",
+                "trigger": null,
+                "expected": "20px",
+                "attributeName": "padding",
+                "is_frontend": true
+            }
+        ],
+        "backend_testcases": []
+    },
+    {
+        "id": 1749410002010,
+        "title": "Thêm margin cho một phần tử",
+        "description": "Tạo một `div` với class 'spaced-out' và đặt `margin` là '15px'.",
+        "exercise_type": "frontend",
+        "frontend_testcases": [
+            {
+                "id": 1,
+                "name": "Kiểm tra sự tồn tại của div",
+                "type": "element_exists",
+                "selector": ".spaced-out",
+                "trigger": null,
+                "expected": null,
+                "attributeName": null,
+                "is_frontend": true
+            },
+            {
+                "id": 2,
+                "name": "Kiểm tra margin",
+                "type": "attribute_equals",
+                "selector": ".spaced-out",
+                "trigger": null,
+                "expected": "15px",
+                "attributeName": "margin",
+                "is_frontend": true
+            }
+        ],
+        "backend_testcases": []
+    },
+    {
+        "id": 1749410003001,
+        "title": "Thay đổi văn bản khi nhấp chuột",
+        "description": "Tạo một đoạn văn `<p>` có id 'message' với nội dung 'Nhấn vào tôi'. Khi nhấp vào, nội dung thay đổi thành 'Đã nhấn!'.",
+        "exercise_type": "frontend",
+        "frontend_testcases": [
+            {
+                "id": 1,
+                "name": "Kiểm tra nội dung ban đầu",
+                "type": "text_equals",
+                "selector": "#message",
+                "trigger": null,
+                "expected": "Nhấn vào tôi",
+                "attributeName": null,
+                "is_frontend": true
+            },
+            {
+                "id": 2,
+                "name": "Kiểm tra nội dung sau khi nhấp",
+                "type": "text_equals",
+                "selector": "#message",
+                "trigger": "click:#message",
+                "expected": "Đã nhấn!",
+                "attributeName": null,
+                "is_frontend": true
+            }
+        ],
+        "backend_testcases": []
+    },
+    {
+        "id": 1749410003002,
+        "title": "Ẩn/Hiện một phần tử",
+        "description": "Tạo một `div` có id 'secret-box' và một nút bấm có id 'toggle-btn'. Khi nhấp vào nút, `div` sẽ chuyển đổi trạng thái hiển thị (từ `display: block` sang `display: none` và ngược lại).",
+        "exercise_type": "frontend",
+        "frontend_testcases": [
+            {
+                "id": 1,
+                "name": "Kiểm tra div bị ẩn sau lần nhấp đầu tiên",
+                "type": "attribute_equals",
+                "selector": "#secret-box",
+                "trigger": "click:#toggle-btn",
+                "expected": "none",
+                "attributeName": "display",
+                "is_frontend": true
+            },
+            {
+                "id": 2,
+                "name": "Kiểm tra div hiển thị lại sau lần nhấp thứ hai",
+                "type": "attribute_equals",
+                "selector": "#secret-box",
+                "trigger": "click:#toggle-btn; click:#toggle-btn",
+                "expected": "block",
+                "attributeName": "display",
+                "is_frontend": true
+            }
+        ],
+        "backend_testcases": []
+    },
+    {
+        "id": 1749410003003,
+        "title": "Bộ đếm nhấp chuột",
+        "description": "Tạo một nút bấm 'count-btn' và một `span` 'counter' hiển thị '0'. Mỗi lần nhấp vào nút, số trong `span` tăng lên 1.",
+        "exercise_type": "frontend",
+        "frontend_testcases": [
+            {
+                "id": 1,
+                "name": "Kiểm tra giá trị ban đầu",
+                "type": "text_equals",
+                "selector": "#counter",
+                "trigger": null,
+                "expected": "0",
+                "attributeName": null,
+                "is_frontend": true
+            },
+            {
+                "id": 2,
+                "name": "Kiểm tra giá trị sau 3 lần nhấp",
+                "type": "text_equals",
+                "selector": "#counter",
+                "trigger": "click:#count-btn; click:#count-btn; click:#count-btn",
+                "expected": "3",
+                "attributeName": null,
+                "is_frontend": true
+            }
+        ],
+        "backend_testcases": []
+    },
+    {
+        "id": 1749410003004,
+        "title": "Cập nhật văn bản theo ô nhập liệu",
+        "description": "Tạo một ô nhập liệu 'name-input' và một `div` 'greeting'. Khi người dùng gõ vào ô nhập liệu, `div` sẽ hiển thị 'Xin chào, [tên người dùng]!'.",
+        "exercise_type": "frontend",
+        "frontend_testcases": [
+            {
+                "id": 1,
+                "name": "Kiểm tra lời chào sau khi nhập liệu",
+                "type": "text_equals",
+                "selector": "#greeting",
+                "trigger": "input:#name-input=Alice",
+                "expected": "Xin chào, Alice!",
+                "attributeName": null,
+                "is_frontend": true
+            }
+        ],
+        "backend_testcases": []
+    },
+    {
+        "id": 1749410003005,
+        "title": "Thêm/Xóa class CSS khi nhấp",
+        "description": "Tạo một `div` với id 'highlight-box'. Khi nhấp vào nó, một class tên là 'highlight' (có màu nền vàng) sẽ được thêm vào hoặc xóa đi.",
+        "exercise_type": "frontend",
+        "frontend_testcases": [
+            {
+                "id": 1,
+                "name": "Kiểm tra class được thêm vào sau khi nhấp",
+                "type": "attribute_equals",
+                "selector": "#highlight-box",
+                "trigger": "click:#highlight-box",
+                "expected": "highlight",
+                "attributeName": "class",
+                "is_frontend": true
+            },
+            {
+                "id": 2,
+                "name": "Kiểm tra class bị xóa sau lần nhấp thứ hai",
+                "type": "attribute_equals",
+                "selector": "#highlight-box",
+                "trigger": "click:#highlight-box; click:#highlight-box",
+                "expected": "",
+                "attributeName": "class",
+                "is_frontend": true
+            }
+        ],
+        "backend_testcases": []
+    },
+    {
+        "id": 1749410003006,
+        "title": "Vô hiệu hóa nút bấm",
+        "description": "Tạo một checkbox 'terms-check' và một nút 'submit-button'. Nút sẽ bị vô hiệu hóa (`disabled`) cho đến khi checkbox được chọn.",
+        "exercise_type": "frontend",
+        "frontend_testcases": [
+            {
+                "id": 1,
+                "name": "Kiểm tra nút bị vô hiệu hóa ban đầu",
+                "type": "attribute_equals",
+                "selector": "#submit-button",
+                "trigger": null,
+                "expected": "true",
+                "attributeName": "disabled",
+                "is_frontend": true
+            },
+            {
+                "id": 2,
+                "name": "Kiểm tra nút được kích hoạt sau khi chọn checkbox",
+                "type": "attribute_equals",
+                "selector": "#submit-button",
+                "trigger": "click:#terms-check",
+                "expected": "false",
+                "attributeName": "disabled",
+                "is_frontend": true
+            }
+        ],
+        "backend_testcases": []
+    },
+    {
+        "id": 1749410003007,
+        "title": "Xác thực form đơn giản",
+        "description": "Tạo một form với ô nhập liệu 'email-field' và nút gửi. Nếu ô email trống khi gửi, một `div` lỗi 'error-message' sẽ hiển thị văn bản 'Email không được để trống'.",
+        "exercise_type": "frontend",
+        "frontend_testcases": [
+            {
+                "id": 1,
+                "name": "Kiểm tra thông báo lỗi khi trường trống",
+                "type": "text_equals",
+                "selector": "#error-message",
+                "trigger": "click:#submit-form-btn",
+                "expected": "Email không được để trống",
+                "attributeName": null,
+                "is_frontend": true
+            }
+        ],
+        "backend_testcases": []
+    },
+    {
+        "id": 1749410003008,
+        "title": "Chuyển đổi Chế độ Tối",
+        "description": "Tạo một nút 'dark-mode-toggle'. Khi nhấp, một class 'dark-mode' được thêm vào thẻ `<body>`, thay đổi màu nền và màu chữ của trang.",
+        "exercise_type": "frontend",
+        "frontend_testcases": [
+            {
+                "id": 1,
+                "name": "Kiểm tra body có class 'dark-mode' sau khi nhấp",
+                "type": "attribute_equals",
+                "selector": "body",
+                "trigger": "click:#dark-mode-toggle",
+                "expected": "dark-mode",
+                "attributeName": "class",
+                "is_frontend": true
+            }
+        ],
+        "backend_testcases": []
+    },
+    {
+        "id": 1749410003009,
+        "title": "Hiển thị thông báo khi form được gửi",
+        "description": "Tạo một form với id 'contact-form'. Khi form được gửi thành công, một alert JavaScript với nội dung 'Gửi thành công!' sẽ xuất hiện.",
+        "exercise_type": "frontend",
+        "frontend_testcases": [
+            {
+                "id": 1,
+                "name": "Kiểm tra alert khi gửi form",
+                "type": "js_alert",
+                "selector": null,
+                "trigger": "submit:#contact-form",
+                "expected": "Gửi thành công!",
+                "attributeName": null,
+                "is_frontend": true
+            }
+        ],
+        "backend_testcases": []
+    },
+    {
+        "id": 1749410003010,
+        "title": "Xóa mục khỏi danh sách",
+        "description": "Tạo một danh sách `<ul>` các mục, mỗi mục có một nút 'Xóa'. Khi nhấp vào nút 'Xóa', mục `<li>` tương ứng sẽ bị xóa khỏi DOM.",
+        "exercise_type": "frontend",
+        "frontend_testcases": [
+            {
+                "id": 1,
+                "name": "Kiểm tra mục đầu tiên bị xóa",
+                "type": "element_does_not_exist",
+                "selector": "#item-1",
+                "trigger": "click:#delete-btn-1",
+                "expected": null,
+                "attributeName": null,
+                "is_frontend": true
+            }
+        ],
+        "backend_testcases": []
+    },
+    {
+        "id": 1749410004001,
+        "title": "Tạo header với logo và điều hướng",
+        "description": "Tạo một thẻ `<header>` chứa một `<img>` với class 'logo' và một thẻ `<nav>` chứa danh sách `<ul>` các liên kết điều hướng.",
+        "exercise_type": "frontend",
+        "frontend_testcases": [
+            {
+                "id": 1,
+                "name": "Tồn tại header",
+                "type": "element_exists",
+                "selector": "header",
+                "trigger": null,
+                "expected": null,
+                "attributeName": null,
+                "is_frontend": true
+            },
+            {
+                "id": 2,
+                "name": "Tồn tại logo trong header",
+                "type": "element_exists",
+                "selector": "header img.logo",
+                "trigger": null,
+                "expected": null,
+                "attributeName": null,
+                "is_frontend": true
+            },
+            {
+                "id": 3,
+                "name": "Tồn tại nav trong header",
+                "type": "element_exists",
+                "selector": "header nav ul",
+                "trigger": null,
+                "expected": null,
+                "attributeName": null,
+                "is_frontend": true
+            }
+        ],
+        "backend_testcases": []
+    },
+    {
+        "id": 1749410004002,
+        "title": "Tạo một card sản phẩm",
+        "description": "Tạo một `div` có class 'product-card' chứa một `<img>`, một `<h2>` cho tên sản phẩm, và một `<p>` cho giá sản phẩm.",
+        "exercise_type": "frontend",
+        "frontend_testcases": [
+            {
+                "id": 1,
+                "name": "Tồn tại card sản phẩm",
+                "type": "element_exists",
+                "selector": ".product-card",
+                "trigger": null,
+                "expected": null,
+                "attributeName": null,
+                "is_frontend": true
+            },
+            {
+                "id": 2,
+                "name": "Tồn tại ảnh trong card",
+                "type": "element_exists",
+                "selector": ".product-card img",
+                "trigger": null,
+                "expected": null,
+                "attributeName": null,
+                "is_frontend": true
+            },
+            {
+                "id": 3,
+                "name": "Tồn tại tên sản phẩm trong card",
+                "type": "element_exists",
+                "selector": ".product-card h2",
+                "trigger": null,
+                "expected": null,
+                "attributeName": null,
+                "is_frontend": true
+            },
+            {
+                "id": 4,
+                "name": "Tồn tại giá sản phẩm trong card",
+                "type": "element_exists",
+                "selector": ".product-card p",
+                "trigger": null,
+                "expected": null,
+                "attributeName": null,
+                "is_frontend": true
+            }
+        ],
+        "backend_testcases": []
+    },
+    {
+        "id": 1749410004003,
+        "title": "Làm tròn góc của ảnh",
+        "description": "Tạo một thẻ `<img>` với class 'avatar' và đặt `border-radius` là '50%' để làm cho nó có hình tròn.",
+        "exercise_type": "frontend",
+        "frontend_testcases": [
+            {
+                "id": 1,
+                "name": "Tồn tại ảnh",
+                "type": "element_exists",
+                "selector": "img.avatar",
+                "trigger": null,
+                "expected": null,
+                "attributeName": null,
+                "is_frontend": true
+            },
+            {
+                "id": 2,
+                "name": "Kiểm tra border-radius",
+                "type": "attribute_equals",
+                "selector": "img.avatar",
+                "trigger": null,
+                "expected": "50%",
+                "attributeName": "border-radius",
+                "is_frontend": true
+            }
+        ],
+        "backend_testcases": []
+    },
+    {
+        "id": 1749410004004,
+        "title": "Tạo thanh tiến trình (progress bar)",
+        "description": "Tạo một `div` container 'progress-bar' và một `div` con 'progress-level' bên trong. Chiều rộng của 'progress-level' sẽ thể hiện mức độ tiến trình (ví dụ: 75%).",
+        "exercise_type": "frontend",
+        "frontend_testcases": [
+            {
+                "id": 1,
+                "name": "Tồn tại thanh tiến trình",
+                "type": "element_exists",
+                "selector": ".progress-bar",
+                "trigger": null,
+                "expected": null,
+                "attributeName": null,
+                "is_frontend": true
+            },
+            {
+                "id": 2,
+                "name": "Kiểm tra chiều rộng của mức tiến trình",
+                "type": "attribute_equals",
+                "selector": ".progress-level",
+                "trigger": null,
+                "expected": "75%",
+                "attributeName": "width",
+                "is_frontend": true
+            }
+        ],
+        "backend_testcases": []
+    },
+    {
+        "id": 1749410004005,
+        "title": "Hiển thị tooltip khi di chuột",
+        "description": "Tạo một `span` với class 'tooltip-container' chứa một văn bản và một `span` khác class 'tooltip-text' bị ẩn. Khi di chuột qua 'tooltip-container', 'tooltip-text' sẽ hiện ra.",
+        "exercise_type": "frontend",
+        "frontend_testcases": [
+            {
+                "id": 1,
+                "name": "Tooltip bị ẩn ban đầu",
+                "type": "attribute_equals",
+                "selector": ".tooltip-text",
+                "trigger": null,
+                "expected": "hidden",
+                "attributeName": "visibility",
+                "is_frontend": true
+            },
+            {
+                "id": 2,
+                "name": "Tooltip hiển thị khi di chuột",
+                "type": "attribute_equals",
+                "selector": ".tooltip-container:hover .tooltip-text",
+                "trigger": "hover:.tooltip-container",
+                "expected": "visible",
+                "attributeName": "visibility",
+                "is_frontend": true
+            }
+        ],
+        "backend_testcases": []
+    },
+    {
+        "id": 1749410004006,
+        "title": "Thêm hiệu ứng đổ bóng cho box",
+        "description": "Tạo một `div` có id 'shadow-box' và thêm thuộc tính `box-shadow` với giá trị '10px 10px 5px grey'.",
+        "exercise_type": "frontend",
+        "frontend_testcases": [
+            {
+                "id": 1,
+                "name": "Tồn tại box",
+                "type": "element_exists",
+                "selector": "#shadow-box",
+                "trigger": null,
+                "expected": null,
+                "attributeName": null,
+                "is_frontend": true
+            },
+            {
+                "id": 2,
+                "name": "Kiểm tra box-shadow",
+                "type": "attribute_equals",
+                "selector": "#shadow-box",
+                "trigger": null,
+                "expected": "10px 10px 5px grey",
+                "attributeName": "box-shadow",
+                "is_frontend": true
+            }
+        ],
+        "backend_testcases": []
+    },
+    {
+        "id": 1749410004007,
+        "title": "Dropdown menu đơn giản",
+        "description": "Tạo một nút bấm 'menu-btn'. Khi nhấp vào, một `div` có id 'dropdown-content' (chứa các liên kết) sẽ hiển thị.",
+        "exercise_type": "frontend",
+        "frontend_testcases": [
+            {
+                "id": 1,
+                "name": "Dropdown bị ẩn ban đầu",
+                "type": "attribute_equals",
+                "selector": "#dropdown-content",
+                "trigger": null,
+                "expected": "none",
+                "attributeName": "display",
+                "is_frontend": true
+            },
+            {
+                "id": 2,
+                "name": "Dropdown hiển thị sau khi nhấp",
+                "type": "attribute_equals",
+                "selector": "#dropdown-content",
+                "trigger": "click:#menu-btn",
+                "expected": "block",
+                "attributeName": "display",
+                "is_frontend": true
+            }
+        ],
+        "backend_testcases": []
+    },
+    {
+        "id": 1749410004008,
+        "title": "Sao chép văn bản vào clipboard",
+        "description": "Tạo một ô `<input>` có id 'copy-text' với một giá trị và một nút bấm 'copy-btn'. Khi nhấp vào nút, nội dung của ô input sẽ được sao chép vào clipboard và một alert 'Đã sao chép!' sẽ hiện ra.",
+        "exercise_type": "frontend",
+        "frontend_testcases": [
+            {
+                "id": 1,
+                "name": "Kiểm tra alert sau khi sao chép",
+                "type": "js_alert",
+                "selector": null,
+                "trigger": "click:#copy-btn",
+                "expected": "Đã sao chép!",
+                "attributeName": null,
+                "is_frontend": true
+            }
+        ],
+        "backend_testcases": []
+    },
+    {
+        "id": 1749410004009,
+        "title": "Kiểm tra độ mạnh mật khẩu",
+        "description": "Tạo một ô nhập mật khẩu 'password-input' và một `div` 'strength-indicator'. Khi người dùng nhập, `div` sẽ hiển thị 'Yếu', 'Trung bình', hoặc 'Mạnh' dựa trên độ dài mật khẩu.",
+        "exercise_type": "frontend",
+        "frontend_testcases": [
+            {
+                "id": 1,
+                "name": "Kiểm tra mật khẩu 'Yếu' (dưới 4 ký tự)",
+                "type": "text_equals",
+                "selector": "#strength-indicator",
+                "trigger": "input:#password-input=123",
+                "expected": "Yếu",
+                "attributeName": null,
+                "is_frontend": true
+            },
+            {
+                "id": 2,
+                "name": "Kiểm tra mật khẩu 'Trung bình' (4-7 ký tự)",
+                "type": "text_equals",
+                "selector": "#strength-indicator",
+                "trigger": "input:#password-input=123456",
+                "expected": "Trung bình",
+                "attributeName": null,
+                "is_frontend": true
+            },
+            {
+                "id": 3,
+                "name": "Kiểm tra mật khẩu 'Mạnh' (8+ ký tự)",
+                "type": "text_equals",
+                "selector": "#strength-indicator",
+                "trigger": "input:#password-input=12345678",
+                "expected": "Mạnh",
+                "attributeName": null,
+                "is_frontend": true
+            }
+        ],
+        "backend_testcases": []
+    },
+    {
+        "id": 1749410004010,
+        "title": "Tạo một Modal/Popup",
+        "description": "Tạo một nút 'open-modal-btn' và một `div` modal có id 'my-modal' (bị ẩn ban đầu). Khi nhấp vào nút, modal sẽ hiện ra. Modal có một nút 'close-modal-btn' để đóng nó lại.",
+        "exercise_type": "frontend",
+        "frontend_testcases": [
+            {
+                "id": 1,
+                "name": "Modal hiển thị sau khi nhấp nút mở",
+                "type": "attribute_equals",
+                "selector": "#my-modal",
+                "trigger": "click:#open-modal-btn",
+                "expected": "block",
+                "attributeName": "display",
+                "is_frontend": true
+            },
+            {
+                "id": 2,
+                "name": "Modal bị ẩn sau khi nhấp nút đóng",
+                "type": "attribute_equals",
+                "selector": "#my-modal",
+                "trigger": "click:#open-modal-btn; click:#close-modal-btn",
+                "expected": "none",
+                "attributeName": "display",
+                "is_frontend": true
+            }
+        ],
+        "backend_testcases": []
+    },
+    {
+        "id": 1749410005001,
+        "title": "Tạo một footer cố định",
+        "description": "Tạo một thẻ `<footer>` với class 'fixed-footer' được định vị cố định ở cuối trang (`position: fixed`, `bottom: 0`).",
+        "exercise_type": "frontend",
+        "frontend_testcases": [
+            {
+                "id": 1,
+                "name": "Kiểm tra position của footer",
+                "type": "attribute_equals",
+                "selector": ".fixed-footer",
+                "trigger": null,
+                "expected": "fixed",
+                "attributeName": "position",
+                "is_frontend": true
+            },
+            {
+                "id": 2,
+                "name": "Kiểm tra vị trí bottom của footer",
+                "type": "attribute_equals",
+                "selector": ".fixed-footer",
+                "trigger": null,
+                "expected": "0px",
+                "attributeName": "bottom",
+                "is_frontend": true
+            }
+        ],
+        "backend_testcases": []
+    },
+    {
+        "id": 1749410005002,
+        "title": "Hiệu ứng chuyển tiếp (transition) cho chiều rộng",
+        "description": "Tạo một `div` có id 'grow-box' với chiều rộng ban đầu. Khi di chuột qua, chiều rộng tăng lên và có hiệu ứng chuyển tiếp trong 0.5 giây.",
+        "exercise_type": "frontend",
+        "frontend_testcases": [
+            {
+                "id": 1,
+                "name": "Kiểm tra transition-property",
+                "type": "attribute_equals",
+                "selector": "#grow-box",
+                "trigger": null,
+                "expected": "width",
+                "attributeName": "transition-property",
+                "is_frontend": true
+            },
+            {
+                "id": 2,
+                "name": "Kiểm tra transition-duration",
+                "type": "attribute_equals",
+                "selector": "#grow-box",
+                "trigger": null,
+                "expected": "0.5s",
+                "attributeName": "transition-duration",
+                "is_frontend": true
+            }
+        ],
+        "backend_testcases": []
+    },
+    {
+        "id": 1749410005003,
+        "title": "Tạo các tab nội dung",
+        "description": "Tạo ba nút tab và ba `div` nội dung. Khi nhấp vào một nút tab, chỉ `div` nội dung tương ứng được hiển thị, các `div` khác bị ẩn.",
+        "exercise_type": "frontend",
+        "frontend_testcases": [
+            {
+                "id": 1,
+                "name": "Nội dung tab 2 hiển thị khi nhấp",
+                "type": "attribute_equals",
+                "selector": "#content-2",
+                "trigger": "click:#tab-2",
+                "expected": "block",
+                "attributeName": "display",
+                "is_frontend": true
+            },
+            {
+                "id": 2,
+                "name": "Nội dung tab 1 bị ẩn khi nhấp tab 2",
+                "type": "attribute_equals",
+                "selector": "#content-1",
+                "trigger": "click:#tab-2",
+                "expected": "none",
+                "attributeName": "display",
+                "is_frontend": true
+            }
+        ],
+        "backend_testcases": []
+    },
+    {
+        "id": 1749410005004,
+        "title": "Đếm ngược ký tự trong textarea",
+        "description": "Tạo một `<textarea>` có `maxlength` là 150 và một `span` 'char-count'. Khi người dùng nhập, `span` sẽ hiển thị số ký tự còn lại.",
+        "exercise_type": "frontend",
+        "frontend_testcases": [
+            {
+                "id": 1,
+                "name": "Kiểm tra số ký tự còn lại ban đầu",
+                "type": "text_equals",
+                "selector": "#char-count",
+                "trigger": null,
+                "expected": "150",
+                "attributeName": null,
+                "is_frontend": true
+            },
+            {
+                "id": 2,
+                "name": "Kiểm tra số ký tự còn lại sau khi nhập",
+                "type": "text_equals",
+                "selector": "#char-count",
+                "trigger": "input:textarea=hello world",
+                "expected": "139",
+                "attributeName": null,
+                "is_frontend": true
+            }
+        ],
+        "backend_testcases": []
+    },
+    {
+        "id": 1749410005005,
+        "title": "Thêm một mục vào danh sách",
+        "description": "Tạo một ô nhập liệu 'new-item-input', một nút 'add-btn', và một danh sách `<ul>` 'item-list'. Khi nhấp nút, nội dung từ ô nhập liệu sẽ được thêm vào danh sách dưới dạng một mục `<li>` mới.",
+        "exercise_type": "frontend",
+        "frontend_testcases": [
+            {
+                "id": 1,
+                "name": "Kiểm tra mục mới được thêm vào danh sách",
+                "type": "text_equals",
+                "selector": "#item-list li:last-child",
+                "trigger": "input:#new-item-input=Mục mới; click:#add-btn",
+                "expected": "Mục mới",
+                "attributeName": null,
+                "is_frontend": true
+            }
+        ],
+        "backend_testcases": []
+    },
+    {
+        "id": 1749410005006,
+        "title": "Accordion đơn giản",
+        "description": "Tạo một loạt các tiêu đề và các panel nội dung. Khi nhấp vào một tiêu đề, panel nội dung tương ứng sẽ mở ra (hoặc đóng lại nếu đang mở).",
+        "exercise_type": "frontend",
+        "frontend_testcases": [
+            {
+                "id": 1,
+                "name": "Panel 1 mở ra khi nhấp vào tiêu đề 1",
+                "type": "attribute_equals",
+                "selector": "#panel-1",
+                "trigger": "click:#header-1",
+                "expected": "block",
+                "attributeName": "display",
+                "is_frontend": true
+            },
+            {
+                "id": 2,
+                "name": "Panel 1 đóng lại khi nhấp lần nữa",
+                "type": "attribute_equals",
+                "selector": "#panel-1",
+                "trigger": "click:#header-1; click:#header-1",
+                "expected": "none",
+                "attributeName": "display",
+                "is_frontend": true
+            }
+        ],
+        "backend_testcases": []
+    },
+    {
+        "id": 1749410005007,
+        "title": "Lọc danh sách theo từ khóa",
+        "description": "Tạo một ô nhập liệu 'search-input' và một danh sách `<ul>`. Khi người dùng gõ vào ô tìm kiếm, chỉ các mục `<li>` chứa từ khóa tìm kiếm mới được hiển thị.",
+        "exercise_type": "frontend",
+        "frontend_testcases": [
+            {
+                "id": 1,
+                "name": "Mục 'Táo' hiển thị khi tìm 'Táo'",
+                "type": "attribute_equals",
+                "selector": "li.apple",
+                "trigger": "input:#search-input=Táo",
+                "expected": "block",
+                "attributeName": "display",
+                "is_frontend": true
+            },
+            {
+                "id": 2,
+                "name": "Mục 'Cam' bị ẩn khi tìm 'Táo'",
+                "type": "attribute_equals",
+                "selector": "li.orange",
+                "trigger": "input:#search-input=Táo",
+                "expected": "none",
+                "attributeName": "display",
+                "is_frontend": true
+            }
+        ],
+        "backend_testcases": []
+    },
+    {
+        "id": 1749410005008,
+        "title": "Thanh trượt ảnh (Image Slider)",
+        "description": "Tạo một slider ảnh với các nút 'Trước' và 'Sau' để chuyển đổi giữa các ảnh.",
+        "exercise_type": "frontend",
+        "frontend_testcases": [
+            {
+                "id": 1,
+                "name": "Kiểm tra ảnh thứ 2 hiển thị sau khi nhấp 'Sau'",
+                "type": "attribute_equals",
+                "selector": "#img-2",
+                "trigger": "click:#next-btn",
+                "expected": "active",
+                "attributeName": "class",
+                "is_frontend": true
+            },
+            {
+                "id": 2,
+                "name": "Kiểm tra ảnh thứ 1 hiển thị sau khi nhấp 'Sau' rồi 'Trước'",
+                "type": "attribute_equals",
+                "selector": "#img-1",
+                "trigger": "click:#next-btn; click:#prev-btn",
+                "expected": "active",
+                "attributeName": "class",
+                "is_frontend": true
+            }
+        ],
+        "backend_testcases": []
+    },
+    {
+        "id": 1749410005009,
+        "title": "Lưu trạng thái vào Local Storage",
+        "description": "Tạo một ô nhập liệu. Khi người dùng nhập văn bản, văn bản đó sẽ được lưu vào Local Storage. Khi tải lại trang, ô nhập liệu sẽ được điền sẵn với giá trị đã lưu.",
+        "exercise_type": "frontend",
+        "frontend_testcases": [
+            {
+                "id": 1,
+                "name": "Kiểm tra giá trị được điền lại từ Local Storage",
+                "type": "attribute_equals",
+                "selector": "#persistent-input",
+                "trigger": "input:#persistent-input=Dữ liệu; refresh",
+                "expected": "Dữ liệu",
+                "attributeName": "value",
+                "is_frontend": true
+            }
+        ],
+        "backend_testcases": []
+    },
+    {
+        "id": 1749410005010,
+        "title": "Điều hướng đến một trang khác",
+        "description": "Tạo một nút 'go-to-about'. Khi nhấp vào, trang sẽ được chuyển hướng đến '/about.html'.",
+        "exercise_type": "frontend",
+        "frontend_testcases": [
+            {
+                "id": 1,
+                "name": "Kiểm tra URL thay đổi sau khi nhấp",
+                "type": "url_contains",
+                "selector": null,
+                "trigger": "click:#go-to-about",
+                "expected": "/about.html",
+                "attributeName": null,
+                "is_frontend": true
+            }
+        ],
+        "backend_testcases": []
+    }
+]

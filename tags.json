@@ -1,0 +1,49 @@
+{
+  "ky_nang_cong_nghe": {
+    "ngon_ngu_lap_trinh": ["Python", "Java", "JavaScript", "TypeScript", "C#", "C++", "PHP", "Go", "Kotlin", "Swift", "SQL", "Ruby"],
+    "frontend": {
+      "framework_library": ["ReactJS", "Next.js", "Angular", "Vue.js", "Svelte", "jQuery", "Redux", "Vuex", "MobX"],
+      "styling": ["CSS", "Sass", "LESS", "HTML", "Tailwind CSS", "Bootstrap", "Material-UI (MUI)", "Styled-components"]
+    },
+    "backend": {
+      "framework_library": ["Node.js", "Express.js", "Spring Boot", "Spring", "Django", "Flask", ".NET", "ASP.NET Core", "Laravel", "Ruby on Rails"]
+    },
+    "mobile": {
+      "native": ["Swift", "Kotlin", "Objective-C"],
+      "cross_platform": ["React Native", "Flutter", "Xamarin", "Dart"]
+    },
+    "co_so_du_lieu": {
+      "sql": ["MySQL", "PostgreSQL", "Microsoft SQL Server", "Oracle"],
+      "nosql": ["MongoDB", "Redis", "Cassandra", "Firebase Firestore", "DynamoDB"],
+      "orm": ["Hibernate", "Spring Data JPA", "SQLAlchemy", "Prisma", "Mongoose", "Dapper"]
+    },
+    "cloud_devops": {
+      "nen_tang_cloud": ["Amazon Web Services (AWS)", "Microsoft Azure", "Google Cloud Platform (GCP)"],
+      "dich_vu_cloud_pho_bien": ["EC2", "S3", "RDS", "Lambda", "Azure VM", "GCE", "Cloud Functions", "Azure Blob Storage"],
+      "container": ["Docker", "Kubernetes"],
+      "ci_cd": ["Jenkins", "GitHub Actions", "GitLab CI", "CircleCI"],
+      "cong_cu_quan_ly_phien_ban": ["Git", "GitHub", "GitLab", "Bitbucket"]
+    },
+    "ai_data_science": {
+      "library": ["TensorFlow", "PyTorch", "Scikit-learn", "Pandas", "NumPy", "Matplotlib", "Seaborn"],
+      "nen_tang": ["Jupyter Notebook", "Google Colab", "Kaggle"]
+    }
+  },
+  "ky_nang_mem": ["Giao tiếp", "Làm việc nhóm", "Giải quyết vấn đề", "Tư duy phản biện", "Quản lý thời gian", "Chủ động", "Sáng tạo", "Học hỏi nhanh", "Thích ứng", "Chịu áp lực", "Thuyết trình", "Lãnh đạo"],
+  "phuong_phap_lam_viec": ["Agile", "Scrum", "Kanban", "Waterfall", "DevOps", "CI/CD", "TDD", "BDD", "Microservices", "Monolithic", "RESTful APIs", "GraphQL"],
+  "linh_vuc_kinh_nghiem_chung": ["E-commerce", "Fintech", "Healthcare", "Edtech", "Logistics", "Gaming", "AI/ML", "Data Science", "IoT", "Cybersecurity", "Mobile", "Web", "Enterprise"],
+  "trinh_do_ngoai_ngu": {
+    "tieng_anh": ["Giao tiếp cơ bản", "Đọc hiểu tài liệu kỹ thuật", "Giao tiếp tốt", "Giao tiếp thành thạo", "TOEIC 500+", "TOEIC 700+", "IELTS 5.5+", "IELTS 6.5+", "IELTS 7.0+", "Bản ngữ"],
+    "khac": ["Tiếng Nhật N3", "Tiếng Nhật N2", "Tiếng Hàn TOPIK 3", "Tiếng Hàn TOPIK 5"]
+  },
+  "level": {
+    "description": "Hệ thống đánh giá level kỹ năng của ứng viên.",
+    "mapping_guide": {
+      "1": "Sinh viên năm 1-2 hoặc người mới bắt đầu, kiến thức lý thuyết cơ bản, chưa có kinh nghiệm thực tế.",
+      "2": "Sinh viên năm 3-4 hoặc Fresher, đã hoàn thành các đồ án nhỏ, có thể code các bài tập đơn giản.",
+      "3": "Junior Developer (dưới 2 năm kinh nghiệm), có thể làm việc dưới sự hướng dẫn, xử lý các task vừa phải.",
+      "4": "Mid-level Developer (2-4 năm kinh nghiệm), làm việc độc lập, có khả năng thiết kế các module nhỏ.",
+      "5": "Senior Developer / Chuyên gia (trên 4 năm kinh nghiệm), có khả năng thiết kế hệ thống, giải quyết vấn đề phức tạp."
+    }
+  }
+}

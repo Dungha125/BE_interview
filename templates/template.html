@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8" />
+    <title>{{ cv.Name }} - CV</title>
+    <style>
+        /* --- KHAI BÁO FONT: Cách của WeasyPrint --- */
+        @font-face {
+            font-family: 'Roboto';
+            src: url('../fonts/Roboto-Regular.ttf');
+            font-weight: normal;
+            font-style: normal;
+        }
+        @font-face {
+            font-family: 'Roboto';
+            src: url('../fonts/Roboto-Bold.ttf');
+            font-weight: bold;
+            font-style: normal;
+        }
+        @font-face {
+            font-family: 'Roboto';
+            src: url('../fonts/Roboto-Italic.ttf');
+            font-weight: normal;
+            font-style: italic;
+        }
+        @font-face {
+            font-family: 'Roboto';
+            src: url('../fonts/Roboto-BoldItalic.ttf');
+            font-weight: bold;
+            font-style: italic;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            color: #333;
+            line-height: 1.5;
+            font-size: 11pt;
+        }
+        strong, b { font-weight: bold; }
+        em, i { font-style: italic; }
+
+        .container { display: flex; }
+        .sidebar { width: 35%; background-color: #f2f2f2; padding: 25px; }
+        .main-content { width: 65%; padding: 25px; }
+
+        .sidebar h1 { font-size: 22pt; margin: 0 0 5px 0; }
+        .sidebar h2 { font-size: 14pt; font-weight: normal; color: #555; margin: 0 0 20px 0; }
+        .sidebar h3 { font-size: 12pt; border-bottom: 1px solid #ccc; padding-bottom: 5px; margin-top: 20px; }
+        .sidebar p, .sidebar li { font-size: 10pt; }
+        .sidebar ul { list-style-type: none; padding: 0; }
+
+        .main-content h2 { font-size: 14pt; color: #333; border-bottom: 2px solid #333; padding-bottom: 8px; }
+        .item { margin-bottom: 15px; }
+        .item h3 { font-size: 12pt; margin: 0; }
+        .item .meta { font-size: 10pt; color: #666; font-style: italic; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <aside class="sidebar">
+            <h1>{{ cv.Name or "Chưa có tên" }}</h1>
+            <h2>{{ cv.Job_Position or "Chưa có vị trí" }}</h2>
+
+            <h3>THÔNG TIN</h3>
+            <p><strong>Email:</strong> {{ cv.Email or "" }}</p>
+            <p><strong>Phone:</strong> {{ cv.Phone or "" }}</p>
+
+            {% if cv.Skills %}
+            <h3>KỸ NĂNG</h3>
+            <ul>
+                {% for skill in cv.Skills %}
+                <li>• {{ skill }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+
+            {% if cv.Certification %}
+            <h3>CHỨNG CHỈ</h3>
+            <ul>
+                {% for cert in cv.Certification %}
+                <li>• {{ cert }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+        </aside>
+
+        <main class="main-content">
+            {% if cv.Summary %}
+            <section class="item">
+                <h2>TÓM TẮT</h2>
+                <p>{{ cv.Summary }}</p>
+            </section>
+            {% endif %}
+
+            {% if cv.Experience %}
+            <section class="item">
+                <h2>KINH NGHIỆM</h2>
+                {% for job in cv.Experience %}
+                <div class="item">
+                    <h3>{{ job.position }}</h3>
+                    <p class="meta"><strong>{{ job.company }}</strong> | <em>{{ job.time }}</em></p>
+                    <p>{{ job.description }}</p>
+                </div>
+                {% endfor %}
+            </section>
+            {% endif %}
+
+            {% if cv.Projects %}
+            <section class="item">
+                <h2>DỰ ÁN</h2>
+                {% for proj in cv.Projects %}
+                <div class="item">
+                    <h3>{{ proj.name }}</h3>
+                    <p class="meta"><strong>Vai trò:</strong> {{ proj.role }}</p>
+                    <p>{{ proj.description }}</p>
+                </div>
+                {% endfor %}
+            </section>
+            {% endif %}
+
+            {% if cv.Education %}
+            <section class="item">
+                <h2>HỌC VẤN</h2>
+                {% for edu in cv.Education %}
+                <div class="item">
+                    <h3>{{ edu.school }}</h3>
+                    <p class="meta">{{ edu.degree }} - {{ edu.major }} ({{ edu.year }})</p>
+                </div>
+                {% endfor %}
+            </section>
+            {% endif %}
+        </main>
+    </div>
+</body>
+</html>
