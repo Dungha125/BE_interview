@@ -387,23 +387,80 @@ def link_callback(uri, rel):
 #     except FPDFException as e:
 #         print(f"LỖI CUỐI CÙNG KHI GHI FILE PDF: {e}", file=sys.stderr)
 #         raise
-def generate_cv_pdf(cv_info: Dict[str, Any], filename: Optional[str] = None) -> str:
+
+
+
+
+
+# def generate_cv_pdf(cv_info: Dict[str, Any], filename: Optional[str] = None) -> str:
+#     """
+#     Tạo file PDF từ template HTML bằng WeasyPrint và Jinja2.
+#     """
+#     # 1. Thiết lập đường dẫn
+#     base_dir = Path(__file__).resolve().parent
+#     output_folder = base_dir / "generated_cv_pdf_folder"
+#     output_folder.mkdir(exist_ok=True)  # Tạo thư mục nếu chưa có
+#
+#     if not filename:
+#         filename = f"cv_{int(time.time())}.pdf"
+#     filepath = output_folder / filename
+#
+#     # 2. Cấu hình Jinja2 để nạp template từ thư mục 'templates'
+#     template_loader = jinja2.FileSystemLoader(searchpath=str(base_dir / "templates"))
+#     template_env = jinja2.Environment(loader=template_loader)
+#     template = template_env.get_template("template.html")
+#
+#     # 3. Đổ dữ liệu vào template
+#     rendered_html = template.render(cv=cv_info)
+#
+#     # 4. Render HTML thành PDF
+#     # base_url giúp WeasyPrint tìm được các file liên quan như font, ảnh
+#     html_obj = HTML(string=rendered_html, base_url=str(base_dir))
+#     html_obj.write_pdf(filepath)
+#
+#     print(f"File PDF đã được tạo bằng WeasyPrint tại: {filepath}")
+#     return str(filename)
+VALID_TEMPLATES: List[str] = ["template.html", "template2.html", "template3.html"]
+
+def generate_cv_pdf(cv_info: Dict[str, Any], template_name: str = "template.html",
+                    filename: Optional[str] = None) -> str:
     """
     Tạo file PDF từ template HTML bằng WeasyPrint và Jinja2.
+
+    Args:
+        cv_info (Dict[str, Any]): Dictionary chứa thông tin CV.
+        template_name (str): Tên file template trong thư mục 'templates'.
+                             Mặc định là 'template.html'.
+        filename (Optional[str]): Tên file PDF đầu ra. Nếu không có sẽ tự tạo.
+
+    Returns:
+        str: Tên file PDF đã được tạo.
+
+    Raises:
+        ValueError: Nếu template_name không hợp lệ.
     """
+    # 0. Kiểm tra xem template được chọn có hợp lệ không
+    if template_name not in VALID_TEMPLATES:
+        raise ValueError(
+            f"Template không hợp lệ: '{template_name}'. Vui lòng chọn một trong các template sau: {VALID_TEMPLATES}")
+
     # 1. Thiết lập đường dẫn
     base_dir = Path(__file__).resolve().parent
     output_folder = base_dir / "generated_cv_pdf_folder"
     output_folder.mkdir(exist_ok=True)  # Tạo thư mục nếu chưa có
 
     if not filename:
-        filename = f"cv_{int(time.time())}.pdf"
+        # Thêm tên template vào filename để dễ phân biệt
+        template_prefix = Path(template_name).stem
+        filename = f"cv_{template_prefix}_{int(time.time())}.pdf"
     filepath = output_folder / filename
 
     # 2. Cấu hình Jinja2 để nạp template từ thư mục 'templates'
     template_loader = jinja2.FileSystemLoader(searchpath=str(base_dir / "templates"))
     template_env = jinja2.Environment(loader=template_loader)
-    template = template_env.get_template("template.html")
+
+    # === THAY ĐỔI CHÍNH: Lấy template dựa trên tham số `template_name` ===
+    template = template_env.get_template(template_name)
 
     # 3. Đổ dữ liệu vào template
     rendered_html = template.render(cv=cv_info)
@@ -413,7 +470,5 @@ def generate_cv_pdf(cv_info: Dict[str, Any], filename: Optional[str] = None) -> 
     html_obj = HTML(string=rendered_html, base_url=str(base_dir))
     html_obj.write_pdf(filepath)
 
-    print(f"File PDF đã được tạo bằng WeasyPrint tại: {filepath}")
+    print(f"File PDF đã được tạo từ '{template_name}' tại: {filepath}")
     return str(filename)
-
-

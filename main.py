@@ -120,6 +120,7 @@ def load_and_merge_all_problems():
     print(f"Tổng số bài tập đã gộp: {len(LOADED_ALL_PROBLEMS)}")
 
 
+
 # Chạy hàm tải dữ liệu khi khởi động
 load_and_merge_all_problems()
 
@@ -192,6 +193,10 @@ class UserPublic(BaseModel):
 class Token(BaseModel):
     access_token: str
     token_type: str
+
+class GenerateCVRequest(BaseModel):
+    cv_data: schemas.DetailedExtractedCVInfo = Field(..., description="Đối tượng chứa thông tin chi tiết của CV đã được trích xuất.")
+    template_name: str = Field(..., description="Tên file template người dùng đã chọn (ví dụ: 'template2.html').")
 
 
 
@@ -795,3 +800,41 @@ async def upload_and_generate_cv_endpoint(
     }
 
     return JSONResponse(content=final_response)
+
+
+@app.post("/generate-cv",
+          summary="Tạo file CV PDF từ dữ liệu và mẫu template được chọn",
+          tags=["CV Generation"],
+          dependencies=[Depends(auth.role_required([models.Role.ADMIN, models.Role.LECTURER, models.Role.STUDENT]))])
+async def generate_cv_from_template_endpoint(request: GenerateCVRequest):
+    """
+    Endpoint này nhận dữ liệu CV chi tiết và tên của một template,
+    sau đó tạo ra một file CV PDF tương ứng.
+    - **cv_data**: Dữ liệu CV đã được trích xuất từ bước phân tích.
+    - **template_name**: Tên của file template (ví dụ: 'template.html', 'template2.html').
+    """
+    try:
+        # Dữ liệu cv_data từ request là một Pydantic model, cần chuyển thành dict
+        cv_info_dict = request.cv_data.model_dump()
+
+        # Gọi hàm generate_cv_pdf trong một thread riêng để không block server
+        # Hàm này đã được sửa ở lần trước để nhận `template_name`
+        generated_filename = await asyncio.to_thread(
+            ai_model.generate_cv_pdf,
+            cv_info=cv_info_dict,
+            template_name=request.template_name
+        )
+
+        # Trả về tên file đã tạo thành công theo đúng yêu cầu của frontend
+        return {"filename": generated_filename}
+
+    except ValueError as ve:
+        # Bắt lỗi nếu template_name không hợp lệ (đã thêm trong hàm generate_cv_pdf)
+        raise HTTPException(status_code=400, detail=str(ve))
+    except Exception as e:
+        # In traceback ra console để debug
+        print("--- LỖI CHI TIẾT KHI TẠO FILE PDF TÙY CHỌN ---")
+        traceback.print_exc()
+        print("---------------------------------------------")
+        # Trả về lỗi 500 cho frontend
+        raise HTTPException(status_code=500, detail=f"Đã có lỗi xảy ra khi tạo file PDF: {str(e)}")

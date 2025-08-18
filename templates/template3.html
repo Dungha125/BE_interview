@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8" />
+    <title>{{ cv.Name }} - CV</title>
+    <style>
+        /* --- KHAI BÁO FONT --- */
+        @font-face {
+            font-family: 'Roboto';
+            src: url('../fonts/Roboto-Regular.ttf');
+            font-weight: normal;
+        }
+        @font-face {
+            font-family: 'Roboto';
+            src: url('../fonts/Roboto-Bold.ttf');
+            font-weight: bold;
+        }
+        @font-face {
+            font-family: 'Roboto';
+            src: url('../fonts/Roboto-Italic.ttf');
+            font-style: italic;
+        }
+
+        /* --- CÀI ĐẶT CHUNG --- */
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #fff;
+            color: #3a3a3a;
+            font-size: 10.5pt; /* Kích thước font nhỏ hơn để tiết kiệm không gian */
+            line-height: 1.5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 25px auto;
+            padding: 40px;
+            border: 1px solid #e0e0e0;
+        }
+
+        /* --- HEADER --- */
+        .compact-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            border-bottom: 2px solid #333;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+        .header-left h1 {
+            margin: 0;
+            font-size: 26pt;
+            color: #111;
+        }
+        .header-left h2 {
+            margin: 2px 0 0 0;
+            font-size: 14pt;
+            font-weight: normal;
+            color: #555;
+        }
+        .header-right {
+            text-align: right;
+            font-size: 10pt;
+            color: #444;
+        }
+        .header-right p { margin: 0 0 4px 0; }
+
+        /* --- SECTION --- */
+        .section {
+            margin-bottom: 20px;
+        }
+        .section-title {
+            font-size: 13pt;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #333;
+            margin-bottom: 12px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid #ccc;
+        }
+
+        /* --- ITEM (Experience, Projects, Education) --- */
+        .item {
+            margin-bottom: 15px;
+        }
+        .item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 4px;
+        }
+        .item-title {
+            font-size: 11.5pt;
+            font-weight: bold;
+            color: #222;
+        }
+        .item-meta {
+            font-size: 9.5pt;
+            font-style: italic;
+            color: #666;
+            white-space: nowrap;
+            padding-left: 15px;
+        }
+        .item-subtitle {
+            font-size: 10.5pt;
+            font-weight: bold;
+            margin-bottom: 6px;
+            color: #555;
+        }
+        .item p { margin: 0; }
+
+        /* --- KỸ NĂNG & CHỨNG CHỈ (DẠNG DANH SÁCH NHIỀU CỘT) --- */
+        .multi-column-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            column-count: 2; /* Chia thành 2 cột */
+            column-gap: 30px;
+        }
+        .multi-column-list li {
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="compact-header">
+            <div class="header-left">
+                <h1>{{ cv.Name or "Chưa có tên" }}</h1>
+                <h2>{{ cv.Job_Position or "Chưa có vị trí" }}</h2>
+            </div>
+            <div class="header-right">
+                <p><strong>Email:</strong> {{ cv.Email or "" }}</p>
+                <p><strong>Phone:</strong> {{ cv.Phone or "" }}</p>
+            </div>
+        </header>
+
+        <main>
+            {% if cv.Summary %}
+            <section class="section">
+                <h3 class="section-title">Tóm tắt</h3>
+                <p>{{ cv.Summary }}</p>
+            </section>
+            {% endif %}
+
+            {% if cv.Experience %}
+            <section class="section">
+                <h3 class="section-title">Kinh nghiệm làm việc</h3>
+                {% for job in cv.Experience %}
+                <div class="item">
+                    <div class="item-header">
+                        <span class="item-title">{{ job.position }}</span>
+                        <span class="item-meta">{{ job.time }}</span>
+                    </div>
+                    <p class="item-subtitle">{{ job.company }}</p>
+                    <p>{{ job.description }}</p>
+                </div>
+                {% endfor %}
+            </section>
+            {% endif %}
+
+            {% if cv.Projects %}
+            <section class="section">
+                <h3 class="section-title">Dự án</h3>
+                {% for proj in cv.Projects %}
+                <div class="item">
+                    <div class="item-header">
+                        <span class="item-title">{{ proj.name }}</span>
+                    </div>
+                    <p class="item-subtitle"><strong>Vai trò:</strong> {{ proj.role }}</p>
+                    <p>{{ proj.description }}</p>
+                </div>
+                {% endfor %}
+            </section>
+            {% endif %}
+
+            {% if cv.Skills %}
+            <section class="section">
+                <h3 class="section-title">Kỹ năng</h3>
+                <ul class="multi-column-list">
+                    {% for skill in cv.Skills %}
+                    <li>• {{ skill }}</li>
+                    {% endfor %}
+                </ul>
+            </section>
+            {% endif %}
+
+            {% if cv.Education %}
+            <section class="section">
+                <h3 class="section-title">Học vấn</h3>
+                {% for edu in cv.Education %}
+                <div class="item">
+                    <div class="item-header">
+                        <span class="item-title">{{ edu.school }}</span>
+                        <span class="item-meta">{{ edu.year }}</span>
+                    </div>
+                    <p class="item-subtitle">{{ edu.degree }} - {{ edu.major }}</p>
+                </div>
+                {% endfor %}
+            </section>
+            {% endif %}
+
+            {% if cv.Certification %}
+            <section class="section">
+                <h3 class="section-title">Chứng chỉ</h3>
+                <ul class="multi-column-list">
+                     {% for cert in cv.Certification %}
+                    <li>• {{ cert }}</li>
+                    {% endfor %}
+                </ul>
+            </section>
+            {% endif %}
+        </main>
+    </div>
+</body>
+</html>
