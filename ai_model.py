@@ -420,7 +420,7 @@ def link_callback(uri, rel):
 #
 #     print(f"File PDF đã được tạo bằng WeasyPrint tại: {filepath}")
 #     return str(filename)
-VALID_TEMPLATES: List[str] = ["template.html", "template2.html", "template3.html"]
+VALID_TEMPLATES: List[str] = ["template.html", "template2.html", "template3.html","template4.html", "template5.html", "template6.html"]
 
 def generate_cv_pdf(cv_info: Dict[str, Any], template_name: str = "template.html",
                     filename: Optional[str] = None) -> str:

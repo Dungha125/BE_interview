@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{{ cv.Name or 'No Name' }} - Resume</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f4f6f8;
+      margin: 0; padding: 0;
+      color: #333;
+    }
+    .container {
+      max-width: 900px;
+      margin: 30px auto;
+      background-color: #fff;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      min-height: 1000px;
+      display: flex;              /* Dùng flexbox thay cho float */
+      flex-direction: row;
+    }
+    .sidebar {
+      background-color: #2e86de;
+      color: white;
+      padding: 25px;
+      width: 30%;
+    }
+    .content {
+      padding: 25px;
+      width: 70%;
+    }
+    h1 { margin-top: 0; color: #2e86de; }
+    h2 {
+      border-bottom: 2px solid #eee;
+      padding-bottom: 5px;
+      margin-top: 25px;
+      color: #444444;
+    }
+    ul { padding-left: 20px; margin: 10px 0; }
+    .section { margin-bottom: 20px; }
+    .job, .project, .edu { margin-bottom: 15px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="sidebar">
+      <h2>{{ cv.Name or 'No Name' }}</h2>
+      <p><strong>{{ cv.Job_Position or 'No Position' }}</strong></p>
+      <p>Email: {{ cv.Email or 'N/A' }}</p>
+      <p>Phone: {{ cv.Phone or 'N/A' }}</p>
+
+      <h3>Skills</h3>
+      <ul>
+        {% if cv.Skills and cv.Skills|length > 0 %}
+          {% for skill in cv.Skills %}
+            <li>{{ skill }}</li>
+          {% endfor %}
+        {% else %}
+          <li>No skills provided</li>
+        {% endif %}
+      </ul>
+    </div>
+
+    <div class="content">
+      <h1>Summary</h1>
+      <p>{{ cv.Summary or 'No summary provided.' }}</p>
+
+      <h1>Experience</h1>
+      {% if cv.Experience and cv.Experience|length > 0 %}
+        {% for job in cv.Experience %}
+        <div class="job">
+          <h2>{{ job.position or 'No position' }} – {{ job.company or 'No company' }}</h2>
+          <p><em>{{ job.time or 'No time' }}</em></p>
+          <p>{{ job.description or '' }}</p>
+        </div>
+        {% endfor %}
+      {% else %}
+        <p>No experience provided</p>
+      {% endif %}
+
+      <h1>Education</h1>
+      {% if cv.Education and cv.Education|length > 0 %}
+        {% for edu in cv.Education %}
+        <div class="edu">
+          <h2>{{ edu.major or 'No major' }} – {{ edu.school or 'No school' }}</h2>
+          <p><em>{{ edu.year or 'No year' }}</em></p>
+        </div>
+        {% endfor %}
+      {% else %}
+        <p>No education provided</p>
+      {% endif %}
+
+      {% if cv.Projects and cv.Projects|length > 0 %}
+        <h1>Projects</h1>
+        {% for proj in cv.Projects %}
+        <div class="project">
+          <h2>{{ proj.name or 'No name' }}</h2>
+          <p>{{ proj.description or '' }}</p>
+          <p><strong>Technologies:</strong>
+            {% if proj.technologies and proj.technologies|length > 0 %}
+              {{ proj.technologies | join(", ") }}
+            {% else %}
+              N/A
+            {% endif %}
+          </p>
+        </div>
+        {% endfor %}
+      {% endif %}
+    </div>
+  </div>
+</body>
+</html>
