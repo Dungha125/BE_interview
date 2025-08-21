@@ -54,10 +54,9 @@ RUN pip install --no-cache-dir playwright
 
 
 # ---- Giai đoạn 2: Runtime ----
-# Bắt đầu lại với một ảnh gọn nhẹ sạch sẽ, cùng phiên bản Python
 FROM python:3.11-slim
 
-# Cài đặt tất cả các thư viện hệ thống CẦN KHI CHẠY trong một lệnh duy nhất
+# Cài system deps cần cho playwright
 RUN apt-get update && apt-get install -y --no-install-recommends \
     libpango-1.0-0 \
     libpangoft2-1.0-0 \
@@ -94,12 +93,13 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 WORKDIR /app
 
-# Sao chép các thư viện đã được cài ở giai đoạn 1
+# Copy packages từ builder
 COPY --from=builder /usr/local/lib/python3.11/site-packages /usr/local/lib/python3.11/site-packages
 COPY --from=builder /usr/local/bin /usr/local/bin
 
-# Sao chép các browsers đã được cài đặt bởi Playwright
-COPY --from=builder /ms-playwright /ms-playwright
+# Cài browsers trong runtime
+RUN playwright install --with-deps chromium
+
 
 # Lệnh để chạy ứng dụng
 CMD ["gunicorn", "-w", "4", "-k", "uvicorn.workers.UvicornWorker", "main:app", "--bind", "0.0.0.0:${PORT:-8080}"]
