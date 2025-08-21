@@ -52,7 +52,7 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir --upgrade -r requirements.txt
 
 # Cài đặt các trình duyệt cần thiết cho Playwright
-RUN playwright install --with-deps
+RUN python -m playwright install --with-deps
 
 
 # ---- Giai đoạn 2: Runtime ----
