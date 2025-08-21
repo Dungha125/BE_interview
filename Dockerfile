@@ -42,9 +42,14 @@ WORKDIR /app
 COPY requirements.txt .
 
 # Cài đặt requirements + playwright
-RUN pip install --no-cache-dir --upgrade -r requirements.txt && \
-    pip install playwright && \
-    python -m playwright install --with-deps
+# Cài đặt requirements
+RUN pip install --no-cache-dir --upgrade -r requirements.txt
+
+# Cài playwright
+RUN pip install --no-cache-dir playwright
+
+# Cài browsers + deps (chromium, hoặc firefox/webkit nếu cần)
+RUN playwright install --with-deps chromium
 
 
 
