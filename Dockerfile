@@ -48,11 +48,9 @@ WORKDIR /app
 # Chép file requirements.txt vào
 COPY requirements.txt .
 
-# Cài đặt các thư viện Python
-RUN pip install --no-cache-dir --upgrade -r requirements.txt
-
-# Cài đặt các trình duyệt cần thiết cho Playwright
-RUN python -m playwright install --with-deps
+# Cài đặt các thư viện Python và các trình duyệt cần thiết cho Playwright trong cùng một lệnh
+RUN pip install --no-cache-dir --upgrade -r requirements.txt && \
+    python -m playwright install --with-deps
 
 
 # ---- Giai đoạn 2: Runtime ----
