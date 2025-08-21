@@ -45,12 +45,17 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Thiết lập thư mục làm việc
 WORKDIR /app
 
+# Thêm đường dẫn cài đặt của pip vào biến môi trường PATH
+ENV PATH="/usr/local/bin:${PATH}"
+
 # Chép file requirements.txt vào
 COPY requirements.txt .
 
-# Cài đặt các thư viện Python và các trình duyệt cần thiết cho Playwright trong cùng một lệnh
-RUN pip install --no-cache-dir --upgrade -r requirements.txt && \
-    python -m playwright install --with-deps
+# Cài đặt các thư viện Python
+RUN pip install --no-cache-dir --upgrade -r requirements.txt
+
+# Cài đặt các trình duyệt cần thiết cho Playwright
+RUN playwright install --with-deps
 
 
 # ---- Giai đoạn 2: Runtime ----
@@ -100,9 +105,6 @@ COPY --from=builder /usr/local/bin /usr/local/bin
 
 # Sao chép các browsers đã được cài đặt bởi Playwright
 COPY --from=builder /root/.cache/ms-playwright /root/.cache/ms-playwright
-
-# Sao chép code của bạn vào
-COPY . .
 
 # Lệnh để chạy ứng dụng
 CMD ["gunicorn", "-w", "4", "-k", "uvicorn.workers.UvicornWorker", "main:app", "--bind", "0.0.0.0:${PORT:-8080}"]
