@@ -49,7 +49,7 @@ RUN pip install --no-cache-dir --upgrade -r requirements.txt
 RUN pip install --no-cache-dir playwright
 
 # Cài browsers + deps (chromium, hoặc firefox/webkit nếu cần)
-RUN playwright install --with-deps chromium
+#RUN playwright install --with-deps chromium
 
 
 
