@@ -29,3 +29,4 @@ python-dotenv~=1.1.1
 email-validator~=2.2.0
 requests~=2.32.4
 beautifulsoup4~=4.13.4
+playwright
