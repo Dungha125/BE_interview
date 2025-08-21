@@ -1,10 +1,6 @@
 # ---- Giai đoạn 1: Build ----
-# Sử dụng Python 3.11 - phiên bản ổn định và được hỗ trợ rộng rãi
 FROM python:3.11-slim as builder
 
-# Cài đặt tất cả các dependencies hệ thống trong một lệnh duy nhất
-# Bao gồm dependencies cho WeasyPrint VÀ Playwright
-# Các gói được chọn lọc kỹ để phù hợp với python:3.11-slim (Debian)
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     libxml2-dev \
@@ -42,18 +38,14 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libpulse0 \
     && rm -rf /var/lib/apt/lists/*
 
-# Thiết lập thư mục làm việc
 WORKDIR /app
-
-# Thêm đường dẫn cài đặt của pip vào biến môi trường PATH
-ENV PATH="/usr/local/bin:${PATH}"
-
-# Chép file requirements.txt vào
 COPY requirements.txt .
 
-# Cài đặt các thư viện Python VÀ các trình duyệt cần thiết cho Playwright trong cùng một lệnh
+# Cài đặt requirements + playwright
 RUN pip install --no-cache-dir --upgrade -r requirements.txt && \
+    pip install playwright && \
     python -m playwright install --with-deps
+
 
 
 # ---- Giai đoạn 2: Runtime ----
