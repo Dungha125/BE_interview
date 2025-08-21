@@ -41,22 +41,17 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 WORKDIR /app
 COPY requirements.txt .
 
-# Cài đặt requirements + playwright
-# Cài đặt requirements
+# Cài dependencies
 RUN pip install --no-cache-dir --upgrade -r requirements.txt
-
-# Cài playwright
 RUN pip install --no-cache-dir playwright
 
-# Cài browsers + deps (chromium, hoặc firefox/webkit nếu cần)
-#RUN playwright install --with-deps chromium
-
-
+# Cài browsers (chỉ chromium, bạn có thể thêm firefox/webkit nếu cần)
+RUN playwright install chromium
 
 # ---- Giai đoạn 2: Runtime ----
 FROM python:3.11-slim
 
-# Cài system deps cần cho playwright
+# Cài system deps cần cho playwright runtime
 RUN apt-get update && apt-get install -y --no-install-recommends \
     libpango-1.0-0 \
     libpangoft2-1.0-0 \
@@ -93,13 +88,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 WORKDIR /app
 
-# Copy packages từ builder
+# Copy site-packages và playwright browsers từ builder
 COPY --from=builder /usr/local/lib/python3.11/site-packages /usr/local/lib/python3.11/site-packages
 COPY --from=builder /usr/local/bin /usr/local/bin
+COPY --from=builder /root/.cache/ms-playwright /root/.cache/ms-playwright
 
-# Cài browsers trong runtime
-RUN playwright install chromium
+# Copy toàn bộ source code vào container
+COPY . .
 
-
-# Lệnh để chạy ứng dụng
 CMD ["gunicorn", "-w", "4", "-k", "uvicorn.workers.UvicornWorker", "main:app", "--bind", "0.0.0.0:${PORT:-8080}"]
