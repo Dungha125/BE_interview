@@ -1,8 +1,9 @@
 # ---- Giai đoạn 1: Build ----
+# Sử dụng Python 3.11 - phiên bản ổn định và được hỗ trợ rộng rãi
 FROM python:3.11-slim as builder
 
 # Cài đặt tất cả các dependencies hệ thống trong một lệnh duy nhất
-# Bao gồm cả WeasyPrint và Playwright dependencies
+# Bao gồm dependencies cho WeasyPrint VÀ Playwright
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     libxml2-dev \
@@ -44,18 +45,18 @@ WORKDIR /app
 # Chép file requirements.txt vào
 COPY requirements.txt .
 
-# Cài đặt các thư viện Python và Playwright's browsers
+# Cài đặt các thư viện Python
 RUN pip install --no-cache-dir --upgrade -r requirements.txt
-RUN playwright install --with-deps
 
-# Sao chép code của bạn vào
-COPY . .
+# THÊM DÒNG NÀY: Cài đặt các trình duyệt cần thiết cho Playwright
+RUN playwright install --with-deps
 
 
 # ---- Giai đoạn 2: Runtime ----
+# Bắt đầu lại với một ảnh gọn nhẹ sạch sẽ, cùng phiên bản Python
 FROM python:3.11-slim
 
-# Cài đặt các thư viện hệ thống CẦN KHI CHẠY trong một lệnh duy nhất
+# Cài đặt tất cả các thư viện hệ thống CẦN KHI CHẠY trong một lệnh duy nhất
 # Bao gồm dependencies cho WeasyPrint VÀ Playwright
 RUN apt-get update && apt-get install -y --no-install-recommends \
     libpango-1.0-0 \
@@ -91,11 +92,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 WORKDIR /app
 
-# Sao chép các thư viện Python
+# Sao chép các thư viện đã được cài ở giai đoạn 1
 COPY --from=builder /usr/local/lib/python3.11/site-packages /usr/local/lib/python3.11/site-packages
 COPY --from=builder /usr/local/bin /usr/local/bin
 
-# Sao chép các browsers đã được cài đặt bởi Playwright
+# THÊM DÒNG NÀY: Sao chép các browsers đã được cài đặt bởi Playwright
 COPY --from=builder /root/.cache/ms-playwright /root/.cache/ms-playwright
 
 # Sao chép code của bạn vào
