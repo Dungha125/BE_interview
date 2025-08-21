@@ -2,8 +2,9 @@
 FROM python:3.11-slim as builder
 
 # Cài đặt các công cụ build và thư viện hệ thống cần thiết
-# Bao gồm cả dependencies cho lxml, weasyprint VÀ Playwright
-RUN apt-get update && apt-get install -y --no-install-recommends \
+# Bước 1: Cài đặt dependencies cho WeasyPrint và các công cụ build cơ bản
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
     build-essential \
     libxml2-dev \
     libxslt1-dev \
@@ -11,7 +12,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libpangoft2-1.0-0 \
     libpangocairo-1.0-0 \
     libcairo2 \
-    fonts-dejavu \
+    fonts-dejavu
+
+# Bước 2: Cài đặt các dependencies cần thiết cho Playwright
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
     libnss3 \
     libatk-bridge2.0-0 \
     libgtk-3-0 \
@@ -35,9 +40,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libxshmfence1 \
     libatspi2.0-0 \
     libgstreamer-plugins-good1.0-0 \
-    libpulse0 \
-    # Cleanup
-    && rm -rf /var/lib/apt/lists/*
+    libpulse0
+
+# Dọn dẹp cache apt sau khi cài đặt
+RUN rm -rf /var/lib/apt/lists/*
 
 # Thiết lập thư mục làm việc
 WORKDIR /app
@@ -57,12 +63,18 @@ COPY . .
 FROM python:3.11-slim
 
 # Cài đặt các thư viện hệ thống CẦN KHI CHẠY (cho weasyprint VÀ Playwright)
-RUN apt-get update && apt-get install -y --no-install-recommends \
+# Bước 1: Cài đặt dependencies cho WeasyPrint
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
     libpango-1.0-0 \
     libpangoft2-1.0-0 \
     libpangocairo-1.0-0 \
     libcairo2 \
-    fonts-dejavu \
+    fonts-dejavu
+
+# Bước 2: Cài đặt các dependencies cho Playwright
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
     libnss3 \
     libatk-bridge2.0-0 \
     libgtk-3-0 \
