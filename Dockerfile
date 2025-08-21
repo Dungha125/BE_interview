@@ -1,10 +1,9 @@
 # ---- Giai đoạn 1: Build ----
 FROM python:3.11-slim as builder
 
-# Cài đặt các công cụ build và thư viện hệ thống cần thiết
-# Bước 1: Cài đặt dependencies cho WeasyPrint và các công cụ build cơ bản
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends \
+# Cài đặt tất cả các dependencies hệ thống trong một lệnh duy nhất
+# Bao gồm cả WeasyPrint và Playwright dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     libxml2-dev \
     libxslt1-dev \
@@ -12,69 +11,7 @@ RUN apt-get update \
     libpangoft2-1.0-0 \
     libpangocairo-1.0-0 \
     libcairo2 \
-    fonts-dejavu
-
-# Bước 2: Cài đặt các dependencies cần thiết cho Playwright
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends \
-    libnss3 \
-    libatk-bridge2.0-0 \
-    libgtk-3-0 \
-    libgbm-dev \
-    libasound2 \
-    libgdk-pixbuf2.0-0 \
-    libx11-6 \
-    libxcomposite1 \
-    libxcursor1 \
-    libxdamage1 \
-    libxext6 \
-    libxfixes3 \
-    libxrandr2 \
-    libxtst6 \
-    libglib2.0-0 \
-    libdbus-1-3 \
-    libgstreamer-plugins-base1.0-0 \
-    libgstreamer1.0-0 \
-    libwebp-dev \
-    libxrender1 \
-    libxshmfence1 \
-    libatspi2.0-0 \
-    libgstreamer-plugins-good1.0-0 \
-    libpulse0
-
-# Dọn dẹp cache apt sau khi cài đặt
-RUN rm -rf /var/lib/apt/lists/*
-
-# Thiết lập thư mục làm việc
-WORKDIR /app
-
-# Chép file requirements.txt vào
-COPY requirements.txt .
-
-# Cài đặt các thư viện Python và Playwright's browsers
-RUN pip install --no-cache-dir --upgrade -r requirements.txt
-RUN playwright install --with-deps
-
-# Sao chép code của bạn vào
-COPY . .
-
-
-# ---- Giai đoạn 2: Runtime ----
-FROM python:3.11-slim
-
-# Cài đặt các thư viện hệ thống CẦN KHI CHẠY (cho weasyprint VÀ Playwright)
-# Bước 1: Cài đặt dependencies cho WeasyPrint
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends \
-    libpango-1.0-0 \
-    libpangoft2-1.0-0 \
-    libpangocairo-1.0-0 \
-    libcairo2 \
-    fonts-dejavu
-
-# Bước 2: Cài đặt các dependencies cho Playwright
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends \
+    fonts-dejavu \
     libnss3 \
     libatk-bridge2.0-0 \
     libgtk-3-0 \
@@ -99,7 +36,57 @@ RUN apt-get update \
     libatspi2.0-0 \
     libgstreamer-plugins-good1.0-0 \
     libpulse0 \
-    # Cleanup
+    && rm -rf /var/lib/apt/lists/*
+
+# Thiết lập thư mục làm việc
+WORKDIR /app
+
+# Chép file requirements.txt vào
+COPY requirements.txt .
+
+# Cài đặt các thư viện Python và Playwright's browsers
+RUN pip install --no-cache-dir --upgrade -r requirements.txt
+RUN playwright install --with-deps
+
+# Sao chép code của bạn vào
+COPY . .
+
+
+# ---- Giai đoạn 2: Runtime ----
+FROM python:3.11-slim
+
+# Cài đặt các thư viện hệ thống CẦN KHI CHẠY trong một lệnh duy nhất
+# Bao gồm dependencies cho WeasyPrint VÀ Playwright
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libpango-1.0-0 \
+    libpangoft2-1.0-0 \
+    libpangocairo-1.0-0 \
+    libcairo2 \
+    fonts-dejavu \
+    libnss3 \
+    libatk-bridge2.0-0 \
+    libgtk-3-0 \
+    libgbm-dev \
+    libasound2 \
+    libgdk-pixbuf2.0-0 \
+    libx11-6 \
+    libxcomposite1 \
+    libxcursor1 \
+    libxdamage1 \
+    libxext6 \
+    libxfixes3 \
+    libxrandr2 \
+    libxtst6 \
+    libglib2.0-0 \
+    libdbus-1-3 \
+    libgstreamer-plugins-base1.0-0 \
+    libgstreamer1.0-0 \
+    libwebp-dev \
+    libxrender1 \
+    libxshmfence1 \
+    libatspi2.0-0 \
+    libgstreamer-plugins-good1.0-0 \
+    libpulse0 \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
