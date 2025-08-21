@@ -98,7 +98,7 @@ COPY --from=builder /usr/local/lib/python3.11/site-packages /usr/local/lib/pytho
 COPY --from=builder /usr/local/bin /usr/local/bin
 
 # Cài browsers trong runtime
-RUN playwright install --with-deps chromium
+RUN playwright install chromium
 
 
 # Lệnh để chạy ứng dụng
