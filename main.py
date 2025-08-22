@@ -36,10 +36,11 @@ from file_parser import extract_text
 load_dotenv()
 
 # Configure Gemini API
-GEMINI_API_KEY = os.getenv("GOOGLE_API_KEY")
-if not GEMINI_API_KEY:
-    raise ValueError("Không tìm thấy GOOGLE_API_KEY trong biến môi trường.")
-genai.configure(api_key=GEMINI_API_KEY)
+api_keys_str = os.environ.get("GEMINI_API_KEYS")
+if not api_keys_str:
+    raise ValueError("Biến môi trường 'GEMINI_API_KEYS' chưa được thiết lập.")
+
+GEMINI_API_KEYS = [key.strip() for key in api_keys_str.split(',')]
 
 # Load tags config
 TAGS_FILE = "tags.json"
@@ -260,31 +261,41 @@ def build_matching_prompt(extracted_info: schemas.DetailedExtractedCVInfo) -> st
 # --- Hàm gọi Gemini API ---
 async def call_gemini_api(prompt_text: str, temperature: float, context: str = "chung") -> dict:
     print(f"\n--- Gửi Prompt tới Gemini ({context}) với Temperature: {temperature} ---")
-    try:
-        model = genai.GenerativeModel(model_name="gemini-1.5-flash-latest")
-        safety_settings = [
-            {"category": "HARM_CATEGORY_HARASSMENT", "threshold": "BLOCK_NONE"},
-            {"category": "HARM_CATEGORY_HATE_SPEECH", "threshold": "BLOCK_NONE"},
-            {"category": "HARM_CATEGORY_SEXUALLY_EXPLICIT", "threshold": "BLOCK_NONE"},
-            {"category": "HARM_CATEGORY_DANGEROUS_CONTENT", "threshold": "BLOCK_NONE"},
-        ]
-        generation_config = genai.types.GenerationConfig(temperature=temperature, response_mime_type="application/json")
-        response = await model.generate_content_async(prompt_text, generation_config=generation_config,
-                                                      safety_settings=safety_settings)
-        if not response.parts:
-            raise HTTPException(status_code=500, detail=f"Gemini không trả về nội dung text hợp lệ ({context}).")
-        raw_text_response = response.text.strip()
 
-        if not raw_text_response:
-            raise HTTPException(status_code=500, detail=f"Dữ liệu từ Gemini sau khi làm sạch là rỗng ({context}).")
+    for api_key in GEMINI_API_KEYS:
         try:
-            return json.loads(raw_text_response)
-        except json.JSONDecodeError as e:
-            raise HTTPException(status_code=500,
-                                detail=f"Lỗi phân tích JSON từ Gemini ({context}): {e}. Dữ liệu: '{raw_text_response[:200]}...'")
-    except Exception as e:
-        if isinstance(e, HTTPException): raise e
-        raise HTTPException(status_code=500, detail=f"Lỗi hệ thống khi xử lý với Gemini ({context}): {str(e)}")
+            genai.configure(api_key=api_key)
+            model = genai.GenerativeModel(model_name="gemini-1.5-flash-latest")
+            safety_settings = [
+                {"category": "HARM_CATEGORY_HARASSMENT", "threshold": "BLOCK_NONE"},
+                {"category": "HARM_CATEGORY_HATE_SPEECH", "threshold": "BLOCK_NONE"},
+                {"category": "HARM_CATEGORY_SEXUALLY_EXPLICIT", "threshold": "BLOCK_NONE"},
+                {"category": "HARM_CATEGORY_DANGEROUS_CONTENT", "threshold": "BLOCK_NONE"},
+            ]
+            generation_config = genai.types.GenerationConfig(temperature=temperature, response_mime_type="application/json")
+            response = await model.generate_content_async(prompt_text, generation_config=generation_config,
+                                                          safety_settings=safety_settings)
+
+            if not response.parts:
+                print(f"Lỗi: Gemini không trả về nội dung hợp lệ với key {api_key}. Thử key tiếp theo.")
+                continue
+
+            raw_text_response = response.text.strip()
+            if not raw_text_response:
+                print(f"Lỗi: Dữ liệu từ Gemini sau khi làm sạch là rỗng với key {api_key}. Thử key tiếp theo.")
+                continue
+
+            try:
+                return json.loads(raw_text_response)
+            except json.JSONDecodeError as e:
+                print(f"Lỗi: Lỗi phân tích JSON từ Gemini với key {api_key}. Thử key tiếp theo.")
+                continue
+
+        except Exception as e:
+            print(f"Lỗi: Lỗi hệ thống khi xử lý với Gemini bằng key {api_key}: {str(e)}. Thử key tiếp theo.")
+            continue
+
+    raise HTTPException(status_code=500, detail=f"Tất cả các API key của Gemini đều đã thất bại ({context}).")
 
 
 # --- HÀM HỖ TRỢ ---
@@ -493,7 +504,7 @@ async def analyze_cv_comprehensive_endpoint(
         raise HTTPException(status_code=400, detail="Không thể đọc nội dung từ file hoặc file trống.")
 
     # 2. Trích xuất thông tin chi tiết và validate
-    detailed_cv_info_dict = ai_model.extract_detailed_cv_info(cv_text, GEMINI_API_KEY)
+    detailed_cv_info_dict = ai_model.extract_detailed_cv_info(cv_text, GEMINI_API_KEYS)
     try:
         detailed_cv_info_obj = schemas.DetailedExtractedCVInfo(**detailed_cv_info_dict)
     except ValidationError as e:
@@ -504,7 +515,7 @@ async def analyze_cv_comprehensive_endpoint(
 
     comparison_task = asyncio.to_thread(
         ai_model.compare_and_identify_gaps,
-        detailed_cv_info_obj.model_dump(), target_job_position, GEMINI_API_KEY
+        detailed_cv_info_obj.model_dump(), target_job_position, GEMINI_API_KEYS
     )
     matching_prompt = build_matching_prompt(detailed_cv_info_obj)
     suggestions_task = call_gemini_api(matching_prompt, temperature=0.2, context="get_problem_suggestions")
@@ -542,7 +553,7 @@ async def analyze_cv_comprehensive_endpoint(
     # 4. Xử lý kết quả từ các tác vụ đã chạy
     missing_skills = comparison_results.get("missing_in_user_cv", [])
     learning_path_task = asyncio.to_thread(ai_model.suggest_learning_path, missing_skills,
-                                           GEMINI_API_KEY) if missing_skills else asyncio.sleep(0, result="")
+                                           GEMINI_API_KEYS) if missing_skills else asyncio.sleep(0, result="")
 
     suggested_level = gemini_suggestions_dict.get("level_goi_y")
     final_problems = [p for p in LOADED_ALL_PROBLEMS if p.get("level") == suggested_level and not p.get("is_frontend")]
@@ -744,7 +755,7 @@ async def submit_solution_endpoint(exercise_id: int = Form(...), file: UploadFil
           dependencies=[Depends(auth.role_required([models.Role.ADMIN, models.Role.LECTURER, models.Role.STUDENT]))])
 async def suggest_learning_path_endpoint(request: schemas.LearningPathRequest):
     try:
-        learning_path_text = ai_model.suggest_learning_path(request.skills, GEMINI_API_KEY)
+        learning_path_text = ai_model.suggest_learning_path(request.skills, GEMINI_API_KEYS)
         return {"learning_path": learning_path_text}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Lỗi khi tạo lộ trình học tập: {str(e)}")
@@ -768,7 +779,7 @@ async def upload_and_generate_cv_endpoint(
         raise HTTPException(status_code=400, detail="Không thể đọc nội dung từ file hoặc file trống.")
 
     # 1. Trích xuất thông tin chi tiết từ CV bằng ai_model
-    detailed_cv_info_dict = ai_model.extract_detailed_cv_info(cv_text, GEMINI_API_KEY)
+    detailed_cv_info_dict = ai_model.extract_detailed_cv_info(cv_text, GEMINI_API_KEYS)
     if detailed_cv_info_dict.get("error"):
         raise HTTPException(status_code=500, detail=f"Lỗi trích xuất CV chi tiết: {detailed_cv_info_dict['error']}")
 
