@@ -96,4 +96,4 @@ COPY --from=builder /root/.cache/ms-playwright /root/.cache/ms-playwright
 # Copy toàn bộ source code vào container
 COPY . .
 
-CMD ["gunicorn", "-w", "4", "-k", "uvicorn.workers.UvicornWorker", "main:app", "--bind", "0.0.0.0:${PORT:-8080}"]
+CMD gunicorn -w 4 -k uvicorn.workers.UvicornWorker main:app --bind 0.0.0.0:${PORT:-8080}
