@@ -10,7 +10,8 @@ import sys
 import pathlib
 import tempfile
 import subprocess
-
+import io
+import pandas as pd
 from fastapi import FastAPI, HTTPException, Query, UploadFile, File, Form, Path
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
@@ -430,47 +431,89 @@ def create_user_by_admin(
 
 # New API for Admin to create multiple users (batch)
 @app.post("/admin/users/batch-create", tags=["Admin - User Management"])
-def batch_create_users_by_admin(
-        batch_request: schemas.BatchUserCreateRequest,
+def batch_create_users_from_file(
+        file: UploadFile = File(...),
+        default_password: str = "default_password",  # Mật khẩu mặc định có thể được truyền qua form data
         db: Session = Depends(database.get_db),
         current_user: models.User = Depends(auth.role_required([models.Role.ADMIN]))
 ):
+    """
+    Tạo người dùng hàng loạt bằng cách tải lên tệp CSV hoặc XLSX.
+
+    File phải chứa các cột 'username' và 'email'.
+    """
     results = []
-    for user_data in batch_request.users:
-        username = user_data.username
-        email = user_data.email
-        password = batch_request.default_password
-        role = batch_request.default_role
 
-        if crud.get_user_by_username(db, username=username):
-            results.append(
-                {"username": username, "email": email, "status": "failed", "detail": "Username already registered"})
-            continue
-        if crud.get_user_by_email(db, email=email):
-            results.append(
-                {"username": email, "email": email, "status": "failed", "detail": "Email already registered"})
-            continue
+    try:
+        file_content = file.file.read()
+        file_extension = file.filename.split('.')[-1].lower()
 
-        hashed_password = auth.get_password_hash(password)
-        try:
-            # Create an AdminUserCreate object for crud.create_user
-            temp_user_create = schemas.AdminUserCreate(  # Changed from schemas.UserCreate
-                username=username,
-                email=email,
-                password=password,  # This password will be hashed by crud.create_user
-                role=role  # Use the default_role from batch_request
+        if file_extension == 'csv':
+            df = pd.read_csv(io.BytesIO(file_content))
+        elif file_extension in ['xlsx', 'xls']:
+            df = pd.read_excel(io.BytesIO(file_content))
+        else:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Loại tệp không được hỗ trợ. Vui lòng tải lên tệp CSV hoặc XLSX."
             )
-            db_user = crud.create_user(db=db, user=temp_user_create, hashed_password=hashed_password)
-            results.append(
-                {"username": db_user.username, "email": db_user.email, "status": "success", "role": db_user.role})
-        except Exception as e:
-            db.rollback()  # Rollback if any user creation fails in batch
-            results.append({"username": username, "email": email, "status": "failed", "detail": str(e)})
 
-    db.commit()  # Commit changes after all users are processed in the batch
-    return {"message": "Batch user creation process completed.", "results": results}
+        # Đảm bảo các cột cần thiết tồn tại
+        if 'username' not in df.columns or 'email' not in df.columns:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Tệp tin phải chứa các cột 'username' và 'email'."
+            )
 
+        # Lặp qua từng hàng trong DataFrame
+        for _, row in df.iterrows():
+            username = str(row['username']).strip()
+            email = str(row['email']).strip()
 
+            # Bỏ qua các hàng có giá trị rỗng
+            if not username or not email:
+                continue
+
+            if crud.get_user_by_username(db, username=username):
+                results.append({"username": username, "status": "failed", "detail": "Username đã tồn tại."})
+                continue
+
+            if crud.get_user_by_email(db, email=email):
+                results.append({"email": email, "status": "failed", "detail": "Email đã tồn tại."})
+                continue
+
+            hashed_password = auth.get_password_hash(default_password)
+            try:
+                # Tạo đối tượng AdminUserCreate
+                user_create_data = schemas.AdminUserCreate(
+                    username=username,
+                    email=email,
+                    password=default_password,
+                    role=models.Role.STUDENT  # Hoặc bạn có thể thêm cột 'role' trong file để linh hoạt hơn
+                )
+
+                db_user = crud.create_user(db=db, user=user_create_data, hashed_password=hashed_password)
+                results.append({"username": db_user.username, "status": "success", "role": db_user.role})
+
+            except Exception as e:
+                # Rollback giao dịch nếu có lỗi xảy ra
+                db.rollback()
+                results.append({"username": username, "status": "failed", "detail": str(e)})
+
+    except HTTPException as http_exc:
+        # Ném lại lỗi HTTPException đã xử lý ở trên
+        raise http_exc
+    except Exception as e:
+        # Xử lý các lỗi đọc tệp chung
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Lỗi khi xử lý tệp: {str(e)}"
+        )
+
+    # Commit các thay đổi sau khi tất cả người dùng đã được xử lý
+    db.commit()
+
+    return {"message": "Quá trình tạo người dùng hàng loạt hoàn tất.", "results": results}
 @app.post("/analyze_cv_comprehensive", response_model=schemas.ComprehensiveCVAnalysisResponse,
           summary="Phân tích CV toàn diện: trích xuất, gợi ý VÀ TẠO FILE PDF",
           tags=["Core CV Analysis"],

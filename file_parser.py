@@ -2,7 +2,7 @@
 
 import re
 from pathlib import Path
-
+import io
 # Thư viện cho OCR
 try:
     import pytesseract

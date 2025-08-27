@@ -1,4 +1,5 @@
 # models.py
+import enum
 
 from pydantic import BaseModel, Field
 from typing import List, Optional, Any
@@ -10,7 +11,7 @@ class ExerciseType(str, Enum):
     FRONTEND = "frontend"
     BACKEND = "backend"
 
-class Role(str, Enum):
+class Role(str, enum.Enum):
     ADMIN = "admin"
     LECTURER = "lecturer"
     STUDENT = "student"
