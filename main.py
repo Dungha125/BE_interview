@@ -488,7 +488,7 @@ def batch_create_users_from_file(
                 user_create_data = schemas.AdminUserCreate(
                     username=username,
                     email=email,
-                    password=default_password,
+                    password=hashed_password,
                     role=models.Role.STUDENT  # Hoặc bạn có thể thêm cột 'role' trong file để linh hoạt hơn
                 )
 
