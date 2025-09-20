@@ -853,7 +853,7 @@ async def submit_solution_endpoint(exercise_id: int = Form(...), file: UploadFil
           dependencies=[Depends(auth.role_required([models.Role.ADMIN, models.Role.LECTURER, models.Role.STUDENT]))])
 async def suggest_learning_path_endpoint(request: schemas.LearningPathRequest):
     try:
-        learning_path_text = ai_model.suggest_learning_path(request.skills, GEMINI_API_KEY)
+        learning_path_text = ai_model.suggest_learning_path(request.skills, API_KEYS)
         return {"learning_path": learning_path_text}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Lỗi khi tạo lộ trình học tập: {str(e)}")
@@ -877,7 +877,7 @@ async def upload_and_generate_cv_endpoint(
         raise HTTPException(status_code=400, detail="Không thể đọc nội dung từ file hoặc file trống.")
 
     # 1. Trích xuất thông tin chi tiết từ CV bằng ai_model
-    detailed_cv_info_dict = ai_model.extract_detailed_cv_info(cv_text, GEMINI_API_KEY)
+    detailed_cv_info_dict = ai_model.extract_detailed_cv_info(cv_text, API_KEYS)
     if detailed_cv_info_dict.get("error"):
         raise HTTPException(status_code=500, detail=f"Lỗi trích xuất CV chi tiết: {detailed_cv_info_dict['error']}")
 
