@@ -41,7 +41,7 @@ load_dotenv()
 # === KHU VỰC THAY ĐỔI 1: TẢI VÀ QUẢN LÝ NHIỀU API KEYS ===
 # ==============================================================================
 # Tải nhiều keys từ một biến môi trường duy nhất (phân tách bằng dấu phẩy)
-api_keys_str = os.getenv("GOOGLE_API_KEYS")
+api_keys_str = os.getenv("GOOGLE_API_KEY")
 if not api_keys_str:
     raise ValueError("Không tìm thấy GOOGLE_API_KEYS trong biến môi trường.")
 
