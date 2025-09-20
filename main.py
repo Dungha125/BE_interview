@@ -602,7 +602,7 @@ async def analyze_cv_comprehensive_endpoint(
         raise HTTPException(status_code=400, detail="Không thể đọc nội dung từ file hoặc file trống.")
 
     # 2. Trích xuất thông tin chi tiết và validate
-    detailed_cv_info_dict = ai_model.extract_detailed_cv_info(cv_text, GEMINI_API_KEY)
+    detailed_cv_info_dict = ai_model.extract_detailed_cv_info(cv_text, API_KEYS)
     try:
         detailed_cv_info_obj = schemas.DetailedExtractedCVInfo(**detailed_cv_info_dict)
     except ValidationError as e:
@@ -613,7 +613,7 @@ async def analyze_cv_comprehensive_endpoint(
 
     comparison_task = asyncio.to_thread(
         ai_model.compare_and_identify_gaps,
-        detailed_cv_info_obj.model_dump(), target_job_position, GEMINI_API_KEY
+        detailed_cv_info_obj.model_dump(), target_job_position, API_KEYS
     )
     matching_prompt = build_matching_prompt(detailed_cv_info_obj)
     suggestions_task = call_gemini_api(matching_prompt, temperature=0.2, context="get_problem_suggestions")
@@ -651,7 +651,7 @@ async def analyze_cv_comprehensive_endpoint(
     # 4. Xử lý kết quả từ các tác vụ đã chạy
     missing_skills = comparison_results.get("missing_in_user_cv", [])
     learning_path_task = asyncio.to_thread(ai_model.suggest_learning_path, missing_skills,
-                                           GEMINI_API_KEY) if missing_skills else asyncio.sleep(0, result="")
+                                           API_KEYS) if missing_skills else asyncio.sleep(0, result="")
 
     suggested_level = gemini_suggestions_dict.get("level_goi_y")
     final_problems = [p for p in LOADED_ALL_PROBLEMS if p.get("level") == suggested_level and not p.get("is_frontend")]
