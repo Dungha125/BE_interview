@@ -3,6 +3,7 @@ import asyncio
 import platform
 import os
 import json
+import time
 import uuid
 import shutil
 import traceback
@@ -590,6 +591,8 @@ def batch_create_users_from_file(
 async def analyze_cv_comprehensive_endpoint(
         file: UploadFile = File(..., description="File CV định dạng .pdf, .docx, hoặc .txt")
 ):
+    start_time = time.time()
+    print(f"[{start_time}] BẮT ĐẦU xử lý file: {file.filename}")
     # 1. Đọc và trích xuất văn bản từ file
     with tempfile.TemporaryDirectory() as temp_dir:
         file_path = pathlib.Path(temp_dir) / file.filename
@@ -602,7 +605,8 @@ async def analyze_cv_comprehensive_endpoint(
 
     if not cv_text or not cv_text.strip():
         raise HTTPException(status_code=400, detail="Không thể đọc nội dung từ file hoặc file trống.")
-
+    text_extraction_time = time.time()
+    print(f"[{text_extraction_time}] Trích xuất text xong. Thời gian: {text_extraction_time - start_time:.2f} giây.")
     # 2. Trích xuất thông tin chi tiết và validate
     # SỬA LỖI: Cần gọi hàm `call_gemini_api` đã được nâng cấp cho việc trích xuất
     try:
@@ -615,7 +619,9 @@ async def analyze_cv_comprehensive_endpoint(
         detailed_cv_info_obj = schemas.DetailedExtractedCVInfo(**detailed_cv_info_dict)
     except ValidationError as e:
         raise HTTPException(status_code=422, detail=f"Lỗi xác thực dữ liệu CV: {e.errors()}")
-
+    info_extraction_time = time.time()
+    print(
+        f"[{info_extraction_time}] Trích xuất thông tin chi tiết xong. Thời gian: {info_extraction_time - text_extraction_time:.2f} giây.")
     # 3. Chạy song song các tác vụ AI và tạo file để tối ưu thời gian
     target_job_position = detailed_cv_info_obj.Job_Position or "Software Developer"
 
@@ -659,7 +665,10 @@ async def analyze_cv_comprehensive_endpoint(
         traceback.print_exception(type(generated_filename), generated_filename, generated_filename.__traceback__)
         print("------------------------------------")
         raise HTTPException(status_code=500, detail=f"Lỗi tạo file PDF: {str(generated_filename)}")
-
+    gather_start_time = time.time()
+    results = await asyncio.gather(...)
+    gather_end_time = time.time()
+    print(f"[{gather_end_time}] Chạy song song xong. Thời gian: {gather_end_time - gather_start_time:.2f} giây.")
     # 4. Xử lý kết quả từ các tác vụ đã chạy
     missing_skills = comparison_results.get("missing_in_user_cv", [])
 
@@ -697,7 +706,8 @@ async def analyze_cv_comprehensive_endpoint(
         "suggested_language": gemini_suggestions_dict.get("ngon_ngu_goi_y"),
         "generated_cv_pdf": generated_filename
     }
-
+    end_time = time.time()
+    print(f"[{end_time}] HOÀN THÀNH. Tổng thời gian: {end_time - start_time:.2f} giây.")
     return schemas.ComprehensiveCVAnalysisResponse(**response_payload)
 
 
