@@ -56,28 +56,7 @@ def remove_special_tokens(text):
     return text
 
 
-def _call_gemini_model(prompt_text, api_key, model_name="gemini-1.5-flash", temperature=0.0,
-                       response_mime_type="text/plain"):
-    """Internal helper to call Gemini API."""
-    genai.configure(api_key=api_key)
-    model = genai.GenerativeModel(model_name)
-    safety_settings = [
-        {"category": "HARM_CATEGORY_HARASSMENT", "threshold": "BLOCK_NONE"},
-        {"category": "HARM_CATEGORY_HATE_SPEECH", "threshold": "BLOCK_NONE"},
-        {"category": "HARM_CATEGORY_SEXUALLY_EXPLICIT", "threshold": "BLOCK_NONE"},
-        {"category": "HARM_CATEGORY_DANGEROUS_CONTENT", "threshold": "BLOCK_NONE"},
-    ]
-    generation_config = genai.types.GenerationConfig(temperature=temperature, response_mime_type=response_mime_type)
-    response = model.generate_content(prompt_text, generation_config=generation_config, safety_settings=safety_settings)
-
-    if not response.parts:
-        raise ValueError("Gemini did not return valid content.")
-
-    raw_text_response = response.text.strip()
-    return raw_text_response
-
-
-def extract_detailed_cv_info(cv_text: str, api_key: str) -> dict:
+async def extract_detailed_cv_info(cv_text: str, call_gemini_func) -> dict:
     """
     Extracts detailed CV information using Gemini.
     """
@@ -100,29 +79,8 @@ def extract_detailed_cv_info(cv_text: str, api_key: str) -> dict:
     CV:
     {cv_text}
     """
-    raw_json = _call_gemini_model(extract_prompt, api_key, temperature=0.0, response_mime_type="application/json")
-
-    # Clean and parse JSON
-    raw_json = re.sub(r"^```json[\r\n]*", "", raw_json)
-    raw_json = re.sub(r"^```[\r\n]*", "", raw_json)
-    raw_json = re.sub(r"```[\r\n]*$", "", raw_json)
-    raw_json = raw_json.strip()
-
-    parsed_data = {}
-    try:
-        parsed_data = json.loads(raw_json)
-    except json.JSONDecodeError:
-        # Fallback for malformed JSON, try to find JSON-like string
-        match = re.search(r"\{.*\}", raw_json, re.DOTALL)
-        if match:
-            try:
-                parsed_data = json.loads(match.group(0))
-            except json.JSONDecodeError:
-                return {"error": "Không parse được JSON gốc từ Gemini", "raw_response": raw_json}
-        else:
-            return {"error": "Không tìm thấy JSON trong phản hồi của Gemini", "raw_response": raw_json}
-
-    # --- NEW: Robust parsing and normalization for nested lists of dictionaries ---
+    parsed_data = await call_gemini_func(extract_prompt, temperature=0.0, context="extract_cv_info")
+        # --- NEW: Robust parsing and normalization for nested lists of dictionaries ---
     for field in ["Education", "Experience", "Projects"]:
         if field in parsed_data and isinstance(parsed_data[field], list):
             processed_list = []
@@ -170,7 +128,7 @@ def extract_detailed_cv_info(cv_text: str, api_key: str) -> dict:
     return parsed_data
 
 
-def compare_and_identify_gaps(user_extracted_info: dict, target_job_position: str, api_key: str) -> dict:
+async def compare_and_identify_gaps(user_extracted_info: dict, target_job_position: str, call_gemini_func) -> dict:
     """
     Compares user's extracted info against an ideal profile for a target job position
     to identify missing and extra skills/experiences.
@@ -206,27 +164,10 @@ def compare_and_identify_gaps(user_extracted_info: dict, target_job_position: st
     Trả về kết quả bằng tiếng Việt, định dạng JSON với các trường: "missing_in_user_cv" (array of strings), "extra_in_user_cv" (array of strings), "summary" (string).
     Chỉ trả về JSON, không markdown, không chú thích, không giải thích thêm.
     """
-    raw_json = _call_gemini_model(compare_prompt, api_key, temperature=0.2, response_mime_type="application/json")
-
-    # Clean and parse JSON
-    raw_json = re.sub(r"^```json[\r\n]*", "", raw_json)
-    raw_json = re.sub(r"^```[\r\n]*", "", raw_json)
-    raw_json = re.sub(r"```[\r\n]*$", "", raw_json)
-    raw_json = raw_json.strip()
-
-    try:
-        return json.loads(raw_json)
-    except json.JSONDecodeError:
-        match = re.search(r"\{.*\}", raw_json, re.DOTALL)
-        if match:
-            try:
-                return json.loads(match.group(0))
-            except json.JSONDecodeError:
-                return {"error": "Không parse được JSON từ Gemini", "raw_response": raw_json}
-        return {"error": "Không parse được JSON từ Gemini", "raw_response": raw_json}
+    return await call_gemini_func(compare_prompt, temperature=0.2, context="compare_gaps")
 
 
-def suggest_learning_path(missing_skills: List[str], api_key: str, model_name="gemini-1.5-flash") -> str:
+async def suggest_learning_path(missing_skills: List[str], call_gemini_func) -> str:
     """
     Suggests a learning path based on missing skills using Gemini.
     """
@@ -241,7 +182,8 @@ Hãy đề xuất lộ trình học tập trong 3-6 tháng để giúp người 
 - Nêu rõ mục tiêu, hoạt động hoặc tài liệu nên học cho từng kỹ năng.
 - Viết ngắn gọn, rõ ràng, trình bày bằng tiếng Việt, không sử dụng markdown, không dùng ký hiệu đặc biệt, chỉ cần văn bản thuần túy.
 """
-    return _call_gemini_model(prompt, api_key, model_name=model_name, temperature=0.7)
+    result = await call_gemini_func(prompt, temperature=0.7, context="learning_path")
+    return result.get("learning_path", str(result))
 
 
 def link_callback(uri, rel):

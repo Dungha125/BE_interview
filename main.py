@@ -610,8 +610,8 @@ async def analyze_cv_comprehensive_endpoint(
     # 2. Trích xuất thông tin chi tiết và validate
     # SỬA LỖI: Cần gọi hàm `call_gemini_api` đã được nâng cấp cho việc trích xuất
     try:
-        extraction_prompt = ai_model.extract_detailed_cv_info(cv_text,API_KEYS)  # Giả sử bạn có hàm này trong ai_model
-        detailed_cv_info_dict = await call_gemini_api(extraction_prompt, temperature=0.1, context="extract_cv_info")
+        # Truyền hàm call_gemini_api vào
+        detailed_cv_info_dict = await ai_model.extract_detailed_cv_info(cv_text, call_gemini_api)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Lỗi trích xuất thông tin CV: {e}")
 
@@ -626,12 +626,7 @@ async def analyze_cv_comprehensive_endpoint(
     target_job_position = detailed_cv_info_obj.Job_Position or "Software Developer"
 
     # SỬA LỖI: Các hàm gọi AI khác cũng cần được cập nhật
-    async def comparison_wrapper():
-        # Giả sử hàm này không gọi trực tiếp Gemini mà qua một logic khác
-        return await asyncio.to_thread(
-            ai_model.compare_and_identify_gaps,
-            detailed_cv_info_obj.model_dump(), target_job_position, API_KEYS
-        )
+    comparison_task = ai_model.compare_and_identify_gaps(detailed_cv_info_obj.model_dump(), target_job_position, call_gemini_api)
 
     matching_prompt = build_matching_prompt(detailed_cv_info_obj)
     suggestions_task = call_gemini_api(matching_prompt, temperature=0.2, context="get_problem_suggestions")
@@ -642,7 +637,7 @@ async def analyze_cv_comprehensive_endpoint(
     )
 
     results = await asyncio.gather(
-        comparison_wrapper(), suggestions_task, pdf_generation_task, return_exceptions=True
+        comparison_task, suggestions_task, pdf_generation_task, return_exceptions=True
     )
 
     comparison_results, gemini_suggestions_dict, generated_filename = results
