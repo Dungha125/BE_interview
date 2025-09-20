@@ -608,20 +608,14 @@ async def analyze_cv_comprehensive_endpoint(
     text_extraction_time = time.time()
     print(f"[{text_extraction_time}] Trích xuất text xong. Thời gian: {text_extraction_time - start_time:.2f} giây.")
     # 2. Trích xuất thông tin chi tiết và validate
-    # SỬA LỖI: Cần gọi hàm `call_gemini_api` đã được nâng cấp cho việc trích xuất
     try:
-        # Truyền hàm call_gemini_api vào
+        # Gọi hàm từ ai_model và truyền hàm call_gemini_api vào làm tham số
         detailed_cv_info_dict = await ai_model.extract_detailed_cv_info(cv_text, call_gemini_api)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Lỗi trích xuất thông tin CV: {e}")
-
-    try:
         detailed_cv_info_obj = schemas.DetailedExtractedCVInfo(**detailed_cv_info_dict)
     except ValidationError as e:
-        raise HTTPException(status_code=422, detail=f"Lỗi xác thực dữ liệu CV: {e.errors()}")
-    info_extraction_time = time.time()
-    print(
-        f"[{info_extraction_time}] Trích xuất thông tin chi tiết xong. Thời gian: {info_extraction_time - text_extraction_time:.2f} giây.")
+        raise HTTPException(status_code=422, detail=f"Lỗi xác thực dữ liệu CV từ AI: {e.errors()}")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Lỗi trích xuất thông tin CV: {e}")
     # 3. Chạy song song các tác vụ AI và tạo file để tối ưu thời gian
     target_job_position = detailed_cv_info_obj.Job_Position or "Software Developer"
 
@@ -660,10 +654,6 @@ async def analyze_cv_comprehensive_endpoint(
         traceback.print_exception(type(generated_filename), generated_filename, generated_filename.__traceback__)
         print("------------------------------------")
         raise HTTPException(status_code=500, detail=f"Lỗi tạo file PDF: {str(generated_filename)}")
-    gather_start_time = time.time()
-    results = await asyncio.gather(...)
-    gather_end_time = time.time()
-    print(f"[{gather_end_time}] Chạy song song xong. Thời gian: {gather_end_time - gather_start_time:.2f} giây.")
     # 4. Xử lý kết quả từ các tác vụ đã chạy
     missing_skills = comparison_results.get("missing_in_user_cv", [])
 
