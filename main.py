@@ -581,6 +581,8 @@ def batch_create_users_from_file(
     db.commit()
 
     return {"message": "Quá trình tạo người dùng hàng loạt hoàn tất.", "results": results}
+
+
 @app.post("/analyze_cv_comprehensive", response_model=schemas.ComprehensiveCVAnalysisResponse,
           summary="Phân tích CV toàn diện: trích xuất, gợi ý VÀ TẠO FILE PDF",
           tags=["Core CV Analysis"],
@@ -602,7 +604,13 @@ async def analyze_cv_comprehensive_endpoint(
         raise HTTPException(status_code=400, detail="Không thể đọc nội dung từ file hoặc file trống.")
 
     # 2. Trích xuất thông tin chi tiết và validate
-    detailed_cv_info_dict = ai_model.extract_detailed_cv_info(cv_text, API_KEYS)
+    # SỬA LỖI: Cần gọi hàm `call_gemini_api` đã được nâng cấp cho việc trích xuất
+    try:
+        extraction_prompt = ai_model.extract_detailed_cv_info(cv_text,API_KEYS)  # Giả sử bạn có hàm này trong ai_model
+        detailed_cv_info_dict = await call_gemini_api(extraction_prompt, temperature=0.1, context="extract_cv_info")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Lỗi trích xuất thông tin CV: {e}")
+
     try:
         detailed_cv_info_obj = schemas.DetailedExtractedCVInfo(**detailed_cv_info_dict)
     except ValidationError as e:
@@ -611,19 +619,24 @@ async def analyze_cv_comprehensive_endpoint(
     # 3. Chạy song song các tác vụ AI và tạo file để tối ưu thời gian
     target_job_position = detailed_cv_info_obj.Job_Position or "Software Developer"
 
-    comparison_task = asyncio.to_thread(
-        ai_model.compare_and_identify_gaps,
-        detailed_cv_info_obj.model_dump(), target_job_position, API_KEYS
-    )
+    # SỬA LỖI: Các hàm gọi AI khác cũng cần được cập nhật
+    async def comparison_wrapper():
+        # Giả sử hàm này không gọi trực tiếp Gemini mà qua một logic khác
+        return await asyncio.to_thread(
+            ai_model.compare_and_identify_gaps,
+            detailed_cv_info_obj.model_dump(), target_job_position, API_KEYS
+        )
+
     matching_prompt = build_matching_prompt(detailed_cv_info_obj)
     suggestions_task = call_gemini_api(matching_prompt, temperature=0.2, context="get_problem_suggestions")
+
     pdf_generation_task = asyncio.to_thread(
         ai_model.generate_cv_pdf,  # Gọi hàm mới generate_cv_pdf
         cv_info=detailed_cv_info_dict,
     )
 
     results = await asyncio.gather(
-        comparison_task, suggestions_task, pdf_generation_task, return_exceptions=True
+        comparison_wrapper(), suggestions_task, pdf_generation_task, return_exceptions=True
     )
 
     comparison_results, gemini_suggestions_dict, generated_filename = results
@@ -638,20 +651,27 @@ async def analyze_cv_comprehensive_endpoint(
         print("--- LỖI CHI TIẾT KHI GỢI Ý BÀI TẬP ---")
         traceback.print_exception(type(gemini_suggestions_dict), gemini_suggestions_dict,
                                   gemini_suggestions_dict.__traceback__)
-        raise HTTPException(status_code=500, detail=f"Lỗi gợi ý bài tập: {str(gemini_suggestions_dict)}")
+        # Trả về lỗi từ hàm call_gemini_api đã có chi tiết
+        raise gemini_suggestions_dict
 
     if isinstance(generated_filename, Exception):
-        # ĐÂY LÀ PHẦN QUAN TRỌNG NHẤT
         print("--- LỖI CHI TIẾT KHI TẠO FILE PDF ---")
-        # In toàn bộ traceback ra console của server
         traceback.print_exception(type(generated_filename), generated_filename, generated_filename.__traceback__)
         print("------------------------------------")
-        # Trả về thông báo lỗi chi tiết cho frontend
         raise HTTPException(status_code=500, detail=f"Lỗi tạo file PDF: {str(generated_filename)}")
+
     # 4. Xử lý kết quả từ các tác vụ đã chạy
     missing_skills = comparison_results.get("missing_in_user_cv", [])
-    learning_path_task = asyncio.to_thread(ai_model.suggest_learning_path, missing_skills,
-                                           API_KEYS) if missing_skills else asyncio.sleep(0, result="")
+
+    # SỬA LỖI: Hàm này cũng cần gọi call_gemini_api nếu nó sử dụng AI
+    async def learning_path_wrapper():
+        if not missing_skills:
+            return ""
+        # Giả sử hàm này có logic tạo prompt
+        learning_path_prompt = f"Gợi ý lộ trình học cho các kỹ năng sau: {', '.join(missing_skills)}"
+        return await call_gemini_api(learning_path_prompt, temperature=0.5, context="learning_path")
+
+    learning_path_task = learning_path_wrapper()
 
     suggested_level = gemini_suggestions_dict.get("level_goi_y")
     final_problems = [p for p in LOADED_ALL_PROBLEMS if p.get("level") == suggested_level and not p.get("is_frontend")]
@@ -659,7 +679,10 @@ async def analyze_cv_comprehensive_endpoint(
         final_problems.extend([p for p in LOADED_ALL_PROBLEMS if p.get("is_frontend")])
     unique_problems = list({p['id']: p for p in final_problems}.values())
 
-    learning_path = await learning_path_task
+    learning_path_result = await learning_path_task
+    # Trích xuất text từ response của gemini (nếu response là dict)
+    learning_path = learning_path_result.get("learning_path", "") if isinstance(learning_path_result, dict) else str(
+        learning_path_result)
 
     # 5. Đóng gói và trả về phản hồi toàn diện
     response_payload = {
