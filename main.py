@@ -37,11 +37,30 @@ from file_parser import extract_text
 # Cấu hình ban đầu
 load_dotenv()
 
-# Configure Gemini API
-GEMINI_API_KEY = os.getenv("GOOGLE_API_KEY")
-if not GEMINI_API_KEY:
-    raise ValueError("Không tìm thấy GOOGLE_API_KEY trong biến môi trường.")
-genai.configure(api_key=GEMINI_API_KEY)
+# ==============================================================================
+# === KHU VỰC THAY ĐỔI 1: TẢI VÀ QUẢN LÝ NHIỀU API KEYS ===
+# ==============================================================================
+# Tải nhiều keys từ một biến môi trường duy nhất (phân tách bằng dấu phẩy)
+api_keys_str = os.getenv("GOOGLE_API_KEYS")
+if not api_keys_str:
+    raise ValueError("Không tìm thấy GOOGLE_API_KEYS trong biến môi trường.")
+
+# Tách chuỗi thành một danh sách các key
+API_KEYS = [key.strip() for key in api_keys_str.split(',') if key.strip()]
+if not API_KEYS:
+    raise ValueError("Danh sách API keys rỗng. Vui lòng kiểm tra biến GOOGLE_API_KEYS trong file .env")
+
+print(f"✅ Đã tải thành công {len(API_KEYS)} Google API keys.")
+
+# Biến toàn cục để quản lý việc luân chuyển key (Round-Robin)
+current_key_index = 0
+# Sử dụng asyncio.Lock để đảm bảo an toàn khi nhiều request xảy ra đồng thời
+key_rotation_lock = asyncio.Lock()
+
+# LƯU Ý: Chúng ta không gọi genai.configure() ở đây nữa.
+# Việc configure sẽ được thực hiện ngay trước mỗi cuộc gọi API.
+# ==============================================================================
+
 
 # Load tags config
 TAGS_FILE = "tags.json"
@@ -259,34 +278,82 @@ def build_matching_prompt(extracted_info: schemas.DetailedExtractedCVInfo) -> st
     return prompt.strip()
 
 
-# --- Hàm gọi Gemini API ---
+# ==============================================================================
+# === KHU VỰC THAY ĐỔI 2: CẬP NHẬT HÀM GỌI API VỚI LOGIC LUÂN CHUYỂN KEY ===
+# ==============================================================================
 async def call_gemini_api(prompt_text: str, temperature: float, context: str = "chung") -> dict:
-    print(f"\n--- Gửi Prompt tới Gemini ({context}) với Temperature: {temperature} ---")
-    try:
-        model = genai.GenerativeModel(model_name="gemini-1.5-flash-latest")
-        safety_settings = [
-            {"category": "HARM_CATEGORY_HARASSMENT", "threshold": "BLOCK_NONE"},
-            {"category": "HARM_CATEGORY_HATE_SPEECH", "threshold": "BLOCK_NONE"},
-            {"category": "HARM_CATEGORY_SEXUALLY_EXPLICIT", "threshold": "BLOCK_NONE"},
-            {"category": "HARM_CATEGORY_DANGEROUS_CONTENT", "threshold": "BLOCK_NONE"},
-        ]
-        generation_config = genai.types.GenerationConfig(temperature=temperature, response_mime_type="application/json")
-        response = await model.generate_content_async(prompt_text, generation_config=generation_config,
-                                                      safety_settings=safety_settings)
-        if not response.parts:
-            raise HTTPException(status_code=500, detail=f"Gemini không trả về nội dung text hợp lệ ({context}).")
-        raw_text_response = response.text.strip()
+    """
+    Hàm gọi Gemini API đã được nâng cấp với logic luân chuyển key (Round-Robin và Fallback).
+    - Round-Robin: Phân phối các request lần lượt qua các key.
+    - Fallback: Nếu một key bị lỗi (đặc biệt là lỗi 429), tự động thử key tiếp theo.
+    """
+    global current_key_index
 
-        if not raw_text_response:
-            raise HTTPException(status_code=500, detail=f"Dữ liệu từ Gemini sau khi làm sạch là rỗng ({context}).")
+    # Sử dụng lock để xác định key bắt đầu cho request này một cách an toàn
+    async with key_rotation_lock:
+        start_index = current_key_index
+        # Cập nhật index cho request TIẾP THEO để thực hiện round-robin
+        current_key_index = (current_key_index + 1) % len(API_KEYS)
+
+    # Thử lần lượt tất cả các key, bắt đầu từ `start_index`
+    for i in range(len(API_KEYS)):
+        key_index_to_try = (start_index + i) % len(API_KEYS)
+        api_key = API_KEYS[key_index_to_try]
+
+        print(f"\n--- Gửi Prompt ({context}) - Đang thử với API Key #{key_index_to_try + 1}... ---")
+
         try:
+            # Cấu hình API key cho lần thử này
+            genai.configure(api_key=api_key)
+
+            # Thực hiện cuộc gọi API như bình thường
+            model = genai.GenerativeModel(model_name="gemini-1.5-flash-latest")
+            safety_settings = [
+                {"category": "HARM_CATEGORY_HARASSMENT", "threshold": "BLOCK_NONE"},
+                {"category": "HARM_CATEGORY_HATE_SPEECH", "threshold": "BLOCK_NONE"},
+                {"category": "HARM_CATEGORY_SEXUALLY_EXPLICIT", "threshold": "BLOCK_NONE"},
+                {"category": "HARM_CATEGORY_DANGEROUS_CONTENT", "threshold": "BLOCK_NONE"},
+            ]
+            generation_config = genai.types.GenerationConfig(temperature=temperature,
+                                                             response_mime_type="application/json")
+            response = await model.generate_content_async(
+                prompt_text,
+                generation_config=generation_config,
+                safety_settings=safety_settings
+            )
+
+            # Xử lý response thành công
+            if not response.parts:
+                raise ValueError("Gemini không trả về nội dung text hợp lệ.")
+            raw_text_response = response.text.strip()
+            if not raw_text_response:
+                raise ValueError("Dữ liệu từ Gemini sau khi làm sạch là rỗng.")
+
+            print(f"✅ Thành công với API Key #{key_index_to_try + 1}!")
             return json.loads(raw_text_response)
-        except json.JSONDecodeError as e:
-            raise HTTPException(status_code=500,
-                                detail=f"Lỗi phân tích JSON từ Gemini ({context}): {e}. Dữ liệu: '{raw_text_response[:200]}...'")
-    except Exception as e:
-        if isinstance(e, HTTPException): raise e
-        raise HTTPException(status_code=500, detail=f"Lỗi hệ thống khi xử lý với Gemini ({context}): {str(e)}")
+
+        except Exception as e:
+            # Xử lý lỗi và quyết định có thử key tiếp theo không
+            if "429" in str(e) or "Resource has been exhausted" in str(e):
+                print(f"❌ API Key #{key_index_to_try + 1} đã hết hạn mức (Rate Limit Exceeded). Chuyển key...")
+            else:
+                print(f"🚨 Gặp lỗi khác với API Key #{key_index_to_try + 1}: {str(e)[:200]}... Chuyển key...")
+
+            # Nếu đây là key cuối cùng trong vòng lặp thử lại, ném lỗi ra ngoài
+            if i == len(API_KEYS) - 1:
+                print("🚫 Tất cả các API Key đều đã thử và thất bại.")
+                raise HTTPException(
+                    status_code=500,
+                    detail=f"Tất cả API keys đều lỗi. Lỗi cuối cùng: {str(e)}"
+                )
+
+    # Fallback cuối cùng nếu vòng lặp không trả về kết quả
+    raise HTTPException(status_code=500, detail="Không thể xử lý yêu cầu với Gemini sau khi đã thử tất cả các API key.")
+
+
+# ==============================================================================
+
+
 # --- HÀM HỖ TRỢ ---
 # Cập nhật để nhận DetailedExtractedCVInfo
 def is_frontend_profile(extracted_info: schemas.DetailedExtractedCVInfo) -> bool:
@@ -433,7 +500,7 @@ def create_user_by_admin(
 @app.post("/admin/users/batch-create", tags=["Admin - User Management"])
 def batch_create_users_from_file(
         file: UploadFile = File(...),
-        default_password: str = "default_password",  # Mật khẩu mặc định có thể được truyền qua form data
+        default_password: str = "ptit@123",  # Mật khẩu mặc định có thể được truyền qua form data
         db: Session = Depends(database.get_db),
         current_user: models.User = Depends(auth.role_required([models.Role.ADMIN]))
 ):

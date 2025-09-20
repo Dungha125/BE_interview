@@ -1,5 +1,5 @@
 __pycache__/
 *.pyc
-.env
+
 venv/
 generated_cv_pdf_folder/
