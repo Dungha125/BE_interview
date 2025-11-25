@@ -308,7 +308,7 @@ async def call_gemini_api(prompt_text: str, temperature: float, context: str = "
             genai.configure(api_key=api_key)
 
             # Thực hiện cuộc gọi API như bình thường
-            model = genai.GenerativeModel(model_name="gemini-1.5-flash-latest")
+            model = genai.GenerativeModel(model_name="gemini-1.5-flash")
             safety_settings = [
                 {"category": "HARM_CATEGORY_HARASSMENT", "threshold": "BLOCK_NONE"},
                 {"category": "HARM_CATEGORY_HATE_SPEECH", "threshold": "BLOCK_NONE"},
@@ -431,8 +431,6 @@ async def login_for_access_token(
     access_token = auth.create_access_token(data={"sub": user.username})
     return {"access_token": access_token, "token_type": "bearer"}
 
-
-
 @app.get("/users/me", response_model=schemas.UserPublic, tags=["Authentication"])
 async def read_users_me(current_user: models.User = Depends(auth.get_current_active_user)):
     # API này có thể truy cập bởi tất cả các vai trò đã đăng nhập
@@ -445,7 +443,6 @@ def read_all_users(
 ):
     users = crud.get_users(db)
     return users
-
 
 @app.put("/admin/users/{user_id}", response_model=schemas.UserPublic, tags=["Admin - User Management"])
 def update_user_by_admin(
